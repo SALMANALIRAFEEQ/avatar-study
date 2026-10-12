@@ -1,0 +1,12 @@
+# Response data and exports never go in the public repo
+analysis/data/
+analysis/output/
+.env
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+__pycache__/
+*.pyc

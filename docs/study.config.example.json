@@ -1,0 +1,142 @@
+{
+  "app_version": "1a.0.0",
+  "endpoint_url": "PASTE_APPS_SCRIPT_WEB_APP_URL_HERE",
+  "contact_email": "salmanalirafeeq123@gmail.com",
+  "estimated_minutes": "8 to 10",
+
+  "conditions": {
+    "neutral": { "label": "Neutral" },
+    "warm": { "label": "Warm" }
+  },
+
+  "products": {
+    "A": { "name": "Kora insulated water bottle" },
+    "B": { "name": "Lumo rechargeable desk lamp" }
+  },
+
+  "videos": {
+    "A_neutral": { "file": "media/A_neutral.mp4", "thumb": "media/A_neutral.jpg" },
+    "A_warm":    { "file": "media/A_warm.mp4",    "thumb": "media/A_warm.jpg" },
+    "B_neutral": { "file": "media/B_neutral.mp4", "thumb": "media/B_neutral.jpg" },
+    "B_warm":    { "file": "media/B_warm.mp4",    "thumb": "media/B_warm.jpg" }
+  },
+
+  "sequences": {
+    "S1": [ { "product": "A", "condition": "neutral" }, { "product": "B", "condition": "warm" } ],
+    "S2": [ { "product": "A", "condition": "warm" },    { "product": "B", "condition": "neutral" } ],
+    "S3": [ { "product": "B", "condition": "neutral" }, { "product": "A", "condition": "warm" } ],
+    "S4": [ { "product": "B", "condition": "warm" },    { "product": "A", "condition": "neutral" } ]
+  },
+
+  "sound_check": {
+    "file": "media/soundcheck.mp3",
+    "correct": "orange",
+    "options": ["orange", "window", "river", "pencil"],
+    "max_attempts": 3
+  },
+
+  "scales": {
+    "agree7": {
+      "type": "likert",
+      "points": 7,
+      "labels": ["Strongly disagree", "Disagree", "Somewhat disagree", "Neither agree nor disagree", "Somewhat agree", "Agree", "Strongly agree"]
+    },
+    "extent7": {
+      "type": "likert",
+      "points": 7,
+      "endpoints": ["Not at all", "Extremely"]
+    },
+    "sd7": { "type": "semantic_differential", "points": 7 },
+    "sd5": { "type": "semantic_differential", "points": 5 }
+  },
+
+  "consent": {
+    "title": "Welcome",
+    "body": [
+      "This short study looks at how people respond to product videos presented by digitally generated (AI) presenters.",
+      "You will watch two short videos (about 40 seconds each) and answer some questions. It takes about 8 to 10 minutes.",
+      "Taking part is voluntary and you can stop at any time. We do not collect your name, email or any information that identifies you.",
+      "You must be 18 or older to take part. Please use headphones or turn your sound on.",
+      "Questions: salmanalirafeeq123@gmail.com"
+    ],
+    "checkbox": "I am 18 or older and I agree to take part."
+  },
+
+  "blocks": {
+    "DEMO": {
+      "title": "About you",
+      "shuffle": false,
+      "items": [
+        { "id": "DEMO_age", "type": "single", "text": "Your age", "options": ["18 to 24", "25 to 34", "35 to 44", "45+"] },
+        { "id": "DEMO_gender", "type": "single", "text": "Gender", "options": ["Woman", "Man", "Prefer to self describe", "Prefer not to say"] },
+        { "id": "DEMO_country", "type": "single", "text": "Country you live in", "options": ["Pakistan", "Other"] },
+        { "id": "DEMO_online_shop", "type": "single", "text": "How often do you buy things online?", "options": ["Never", "A few times a year", "Monthly", "Weekly or more"] },
+        { "id": "DEMO_ai_seen", "type": "single", "text": "Before today, had you seen videos with AI generated presenters?", "options": ["No", "Not sure", "Yes, a few", "Yes, often"] }
+      ]
+    },
+
+    "RATING": {
+      "title": "Think about the presenter in the video you just watched.",
+      "subblocks": [
+        { "id": "MC", "scale": "extent7", "shuffle": true, "items": [
+          { "id": "MC_expressive", "text": "How emotionally expressive was the presenter?" },
+          { "id": "MC_warm", "text": "How warm and friendly did the presenter seem?" }
+        ]},
+        { "id": "TR", "scale": "sd7", "shuffle": true, "intro": "The presenter was:", "items": [
+          { "id": "TR_1", "left": "Undependable", "right": "Dependable" },
+          { "id": "TR_2", "left": "Dishonest", "right": "Honest" },
+          { "id": "TR_3", "left": "Unreliable", "right": "Reliable" },
+          { "id": "TR_4", "left": "Insincere", "right": "Sincere" },
+          { "id": "TR_5", "left": "Untrustworthy", "right": "Trustworthy" }
+        ]},
+        { "id": "NAT", "scale": "sd5", "shuffle": true, "intro": "The presenter seemed:", "items": [
+          { "id": "NAT_1", "left": "Fake", "right": "Natural" },
+          { "id": "NAT_2", "left": "Machinelike", "right": "Humanlike" },
+          { "id": "NAT_3", "left": "Unconscious", "right": "Conscious" },
+          { "id": "NAT_4", "left": "Artificial", "right": "Lifelike" },
+          { "id": "NAT_5", "left": "Moving rigidly", "right": "Moving elegantly" }
+        ]},
+        { "id": "LIK", "scale": "sd5", "shuffle": true, "intro": "My impression of the presenter:", "items": [
+          { "id": "LIK_1", "left": "Dislike", "right": "Like" },
+          { "id": "LIK_2", "left": "Unfriendly", "right": "Friendly" },
+          { "id": "LIK_3", "left": "Unkind", "right": "Kind" },
+          { "id": "LIK_4", "left": "Unpleasant", "right": "Pleasant" },
+          { "id": "LIK_5", "left": "Awful", "right": "Nice" }
+        ]},
+        { "id": "ENG", "scale": "agree7", "shuffle": true, "items": [
+          { "id": "ENG_1", "text": "The video held my attention." },
+          { "id": "ENG_2", "text": "I found the video interesting." },
+          { "id": "ENG_3", "text": "If I saw this video online, I would watch it to the end." },
+          { "id": "ATT_1", "text": "To show you are reading carefully, please select \"Somewhat agree\" for this item.", "only_position": 2, "correct": 5 }
+        ]},
+        { "id": "PI", "scale": "agree7", "shuffle": true, "items": [
+          { "id": "PI_1", "text": "If I needed a product like this, I would consider buying it." },
+          { "id": "PI_2", "text": "The likelihood that I would buy this product is high." },
+          { "id": "PI_3", "text": "I would recommend this product to a friend." }
+        ]}
+      ]
+    },
+
+    "CMP": {
+      "title": "Comparing the two videos",
+      "show_thumbnails": true,
+      "shuffle": false,
+      "items": [
+        { "id": "CMP_trust", "type": "single", "text": "Which presenter did you trust more?", "options": ["Video 1", "Video 2", "No difference"], "values": ["video1", "video2", "none"] },
+        { "id": "CMP_buy", "type": "single", "text": "Which video made you more likely to buy the product?", "options": ["Video 1", "Video 2", "No difference"], "values": ["video1", "video2", "none"] },
+        { "id": "CMP_why", "type": "text", "text": "In a sentence or two, what made the difference for you?", "required": false, "max": 500 },
+        { "id": "CMP_noticed", "type": "text", "text": "Did you notice any differences between the two presenters? If yes, what?", "required": false, "max": 500 }
+      ]
+    }
+  },
+
+  "debrief": {
+    "title": "Thank you!",
+    "body": [
+      "This study compared how the emotional style of an AI presenter (calm and neutral vs warm and friendly) affects trust, engagement and interest in a product.",
+      "Both products were fictional and both presenters were AI generated.",
+      "Your answers are saved anonymously. Thank you for your time."
+    ],
+    "show_completion_code": true
+  }
+}
