@@ -197,7 +197,7 @@ export async function flushOutbox(config) {
 
 let lastPartialScreen = -1;
 
-export function sendPartial(state, config, screenType) {
+export function sendPartial(state, config, screenType, totalScreens) {
   if (!isEndpointConfigured(config) || !state.consented_at || state.saved) return;
   if (state.screen === lastPartialScreen || !navigator.sendBeacon) return; // once per screen is enough
   lastPartialScreen = state.screen;
@@ -209,6 +209,7 @@ export function sendPartial(state, config, screenType) {
     sequence_id: state.sequence_id,
     last_screen: state.screen,
     last_screen_type: screenType,
+    total_screens: totalScreens,
     started_at: state.started_at,
     consented_at: state.consented_at,
     sent_at: new Date().toISOString(),

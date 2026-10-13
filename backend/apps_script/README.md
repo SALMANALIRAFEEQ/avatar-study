@@ -52,6 +52,25 @@ The site now saves to the Sheet. While the placeholder is still there, the site 
 3. In the Sheet: `participants` should have 1 new row and `responses` 2 new rows, all with `is_test` = TRUE.
 4. Delete those test rows before real data collection, or simply filter on `is_test`. The analysis drops them either way.
 
+## Email notifications
+
+The script can email you (from and to the Google account that owns it):
+
+- **Someone finished:** one email per finished run, with totals so far, real runs per sequence, time taken, device, attention check, whether both videos were watched to the end, and the completion code.
+- **Someone left without finishing:** an hourly check emails you about anyone who started (after consent) but hasn't finished an hour after they were last active. Each person is reported once. Someone who switches apps and comes back to finish is not reported.
+
+Test runs (`?debug=1`) are emailed too, with `[TEST]` in the subject.
+
+**Turning it on (the order matters):**
+
+1. Paste the new `Code.gs` into the Apps Script editor and save.
+2. In the function dropdown choose **`setupNotifications`** and click **Run**. Google asks for two new permissions (send email as you, run when you're not using it). Allow both. You should get an email titled "Email notifications are on".
+3. **Deploy → Manage deployments → pencil (Edit) → Version: New version → Deploy.**
+
+Do step 2 before step 3. A deployed script that needs permissions you haven't granted yet can't run, and the site would stop saving until you grant them.
+
+**Settings** are at the top of `Code.gs` (`NOTIFY_...`). Before real data collection, set `NOTIFY_TEST_RUNS = false` if you don't want emails for your own test runs, then save and deploy a new version. Gmail allows about 100 emails a day from a personal account, which is far more than this study needs. If the limit is ever hit, responses are still saved; only the email is skipped.
+
 ## Changing the script later (important)
 
 After editing `Code.gs`, **do not** click "New deployment". That creates a **new URL** and the live site would keep sending to the old one.

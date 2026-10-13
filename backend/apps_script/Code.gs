@@ -10,14 +10,26 @@
  * doesn't look exactly like a payload from our site is dropped without writing.
  * This is spam filtering, not security.
  *
+ * Email notifications (settings below): one email per finished run, and an hourly check
+ * that emails about people who started but never finished. Run setupNotifications() once
+ * from the editor to grant email permission and install the hourly check.
+ *
  * After editing this file: Deploy > Manage deployments > (pencil) Edit > Version: New version > Deploy.
  * Do NOT use "New deployment": that creates a new URL and the site stops saving.
  */
 
-var SCRIPT_VERSION = 2;           // reported by doGet, so you can check a redeploy took effect
+var SCRIPT_VERSION = 3;           // reported by doGet, so you can check a redeploy took effect
 var APP_VERSION_PREFIX = '1a.';   // must match the start of app_version in study.config.json
 var MAX_BYTES = 50000;            // bigger payloads are rejected
 var LOCK_WAIT_MS = 20000;
+
+// ---- Email notifications. Sent from and to the Google account that owns this script.
+// A personal Gmail account can send about 100 emails a day; this study needs far fewer.
+var NOTIFY_EMAIL = '';            // '' = the account that owns this script, or put an address here
+var NOTIFY_ON_COMPLETE = true;    // one email each time someone finishes
+var NOTIFY_ON_DROPOUT = true;     // hourly email listing people who left without finishing
+var NOTIFY_TEST_RUNS = true;      // also email for ?debug=1 runs (subject starts with [TEST]); set false at launch
+var DROPOUT_AFTER_MINUTES = 60;   // only call someone a drop-out after this long without finishing
 
 var SHEET_PARTICIPANTS = 'participants';
 var SHEET_RESPONSES = 'responses';
@@ -63,7 +75,7 @@ var RESPONSE_COLUMNS = [
 
 var PARTIAL_COLUMNS = [
   'received_at', 'participant_id', 'app_version', 'is_test', 'sequence_id',
-  'last_screen', 'last_screen_type', 'started_at', 'consented_at', 'sent_at', 'device_class'
+  'last_screen', 'last_screen_type', 'total_screens', 'started_at', 'consented_at', 'sent_at', 'device_class'
 ];
 
 // Godspeed scales (NAT, LIK) are 5 point; everything else is 7 point.
@@ -117,12 +129,14 @@ function saveComplete(data) {
   } finally {
     lock.releaseLock();
   }
+  notifyComplete(p, rs); // after saving, outside the lock; can never undo the save
   return reply({ ok: true, participant_id: p.participant_id });
 }
 
 function savePartial(d) {
   if (!isUuid(d.participant_id) || !validVersion(d.app_version) || typeof d.is_test !== 'boolean') return reply({ ok: false });
   if (!isIntIn(d.last_screen, 0, 200) || !isShortString(d.last_screen_type, 30)) return reply({ ok: false });
+  if (d.total_screens !== undefined && !isIntIn(d.total_screens, 1, 300)) return reply({ ok: false });
 
   var lock = LockService.getScriptLock();
   lock.waitLock(LOCK_WAIT_MS);
@@ -253,6 +267,184 @@ function columnHas(prepared, columnName, value) {
 
 function reply(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ---------------------------------------------------------------- email notifications
+
+function notifyAddress() {
+  return NOTIFY_EMAIL || Session.getEffectiveUser().getEmail();
+}
+
+// Email problems (quota, permissions) are logged and ignored: saving matters more.
+function sendNotification(subject, lines) {
+  try {
+    MailApp.sendEmail(notifyAddress(), subject, lines.join('\n'));
+    return true;
+  } catch (err) {
+    console.warn('Notification not sent: ' + err);
+    return false;
+  }
+}
+
+function notifyComplete(p, rs) {
+  if (!NOTIFY_ON_COMPLETE || (p.is_test && !NOTIFY_TEST_RUNS)) return;
+  try {
+    var counts = completedCounts();
+    var order = rs.slice().sort(function (a, b) { return a.position - b.position; })
+      .map(function (r) { return r.condition; }).join(', then ');
+    var watched = rs.filter(function (r) { return r.watch_completed === true; }).length;
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    sendNotification(
+      (p.is_test ? '[TEST] ' : '') + '[AI Avatar Study] Someone finished (' + counts.real + ' real so far)',
+      [
+        (p.is_test ? 'A test run' : 'A participant') + ' finished the study.',
+        '',
+        'Finished so far: ' + counts.real + ' real, ' + counts.test + ' test',
+        'Real runs per sequence: ' + counts.bySequence,
+        '',
+        'Sequence: ' + p.sequence_id + ' (' + order + ')',
+        'Time taken: ' + minutesSeconds(p.total_duration_s),
+        'Device: ' + p.device_class,
+        'Sound check: ' + (p.sound_check_passed ? 'passed' : 'NOT passed') + ' (' + p.sound_check_attempts + ' attempt(s))',
+        'Attention check: ' + (p.att_passed ? 'passed' : 'FAILED'),
+        'Videos watched to the end: ' + watched + ' of ' + rs.length,
+        'Completion code: ' + p.completion_code,
+        'Participant ID: ' + p.participant_id,
+        '',
+        'Sheet: ' + ss.getUrl()
+      ]);
+  } catch (err) {
+    console.warn('Completion email failed: ' + err);
+  }
+}
+
+// Totals of finished runs: real, test, and real runs per sequence (to watch the balance).
+function completedCounts() {
+  var out = { real: 0, test: 0, bySequence: 'none yet' };
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_PARTICIPANTS);
+  if (!sheet || sheet.getLastRow() < 2) return out;
+  var header = readHeader(sheet);
+  var testCol = header.indexOf('is_test');
+  var seqCol = header.indexOf('sequence_id');
+  var seqs = {};
+  sheet.getRange(2, 1, sheet.getLastRow() - 1, header.length).getValues().forEach(function (row) {
+    var isTest = row[testCol] === true || row[testCol] === 'TRUE';
+    if (isTest) { out.test++; return; }
+    out.real++;
+    var s = String(row[seqCol] || '?');
+    seqs[s] = (seqs[s] || 0) + 1;
+  });
+  var keys = Object.keys(seqs).sort();
+  if (keys.length) out.bySequence = keys.map(function (k) { return k + ': ' + seqs[k]; }).join(', ');
+  return out;
+}
+
+var SCREEN_LABELS = {
+  consent: 'the welcome page',
+  soundcheck: 'the sound check',
+  block: 'the background or comparison questions',
+  video: 'watching a video',
+  rating: 'the rating questions',
+  saving: 'saving their answers (their connection may have dropped)'
+};
+
+// Runs every hour (installed by setupNotifications). Emails once about each person who
+// consented, was last active more than DROPOUT_AFTER_MINUTES ago, and has no finished run.
+function checkDropouts() {
+  if (!NOTIFY_ON_DROPOUT) return;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var pt = ss.getSheetByName(SHEET_PARTIALS);
+  if (!pt || pt.getLastRow() < 2) return;
+
+  var finished = {};
+  var ps = ss.getSheetByName(SHEET_PARTICIPANTS);
+  if (ps && ps.getLastRow() > 1) {
+    var idCol = readHeader(ps).indexOf('participant_id') + 1;
+    ps.getRange(2, idCol, ps.getLastRow() - 1, 1).getValues().forEach(function (r) { finished[r[0]] = true; });
+  }
+
+  // Latest drop-out marker per person.
+  var header = readHeader(pt);
+  var latest = {};
+  pt.getRange(2, 1, pt.getLastRow() - 1, header.length).getValues().forEach(function (row) {
+    var o = {};
+    header.forEach(function (h, i) { o[h] = row[i]; });
+    if (!o.participant_id) return;
+    if (!latest[o.participant_id] || toMillis(o.received_at) > toMillis(latest[o.participant_id].received_at)) {
+      latest[o.participant_id] = o;
+    }
+  });
+
+  var props = PropertiesService.getScriptProperties();
+  var notified = JSON.parse(props.getProperty('dropouts_notified') || '{}');
+  var cutoff = Date.now() - DROPOUT_AFTER_MINUTES * 60000;
+  var leavers = Object.keys(latest).map(function (id) { return latest[id]; }).filter(function (o) {
+    var isTest = o.is_test === true || o.is_test === 'TRUE';
+    if (finished[o.participant_id] || notified[o.participant_id]) return false;
+    if (isTest && !NOTIFY_TEST_RUNS) return false;
+    return toMillis(o.received_at) <= cutoff; // more recent: they may still be going
+  });
+  if (!leavers.length) return;
+
+  var tz = ss.getSpreadsheetTimeZone();
+  var lines = [
+    leavers.length === 1
+      ? 'This person started the study but has not finished:'
+      : 'These ' + leavers.length + ' people started the study but have not finished:',
+    ''
+  ];
+  leavers.forEach(function (o, i) {
+    var isTest = o.is_test === true || o.is_test === 'TRUE';
+    var where = SCREEN_LABELS[o.last_screen_type] || String(o.last_screen_type);
+    var screenNo = Number(o.last_screen) + 1;
+    lines.push((i + 1) + '. ' + (isTest ? '[TEST] ' : '') + 'Stopped at ' + where +
+      (o.total_screens ? ' (screen ' + screenNo + ' of ' + o.total_screens + ')' : ' (screen ' + screenNo + ')'));
+    lines.push('   Started: ' + formatTime(o.consented_at || o.started_at, tz) + '   Last active: ' + formatTime(o.received_at, tz));
+    lines.push('   Device: ' + o.device_class + '   Sequence: ' + (o.sequence_id || 'not assigned'));
+    lines.push('   Participant ID: ' + o.participant_id);
+    lines.push('');
+  });
+  lines.push('If someone comes back and finishes later, you will get the normal "finished" email.');
+  lines.push('Sheet: ' + ss.getUrl());
+
+  var allTest = leavers.every(function (o) { return o.is_test === true || o.is_test === 'TRUE'; });
+  var subject = (allTest ? '[TEST] ' : '') + '[AI Avatar Study] ' + leavers.length +
+    (leavers.length === 1 ? ' person' : ' people') + ' left without finishing';
+  if (sendNotification(subject, lines)) {
+    leavers.forEach(function (o) { notified[o.participant_id] = Date.now(); });
+    props.setProperty('dropouts_notified', JSON.stringify(notified));
+  }
+}
+
+// Run once from the editor (select setupNotifications, press Run). Asks for permission to
+// send email and run on a timer, installs the hourly drop-out check, and sends a test
+// email. Running it again is safe: it replaces the old timer.
+function setupNotifications() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'checkDropouts') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('checkDropouts').timeBased().everyHours(1).create();
+  MailApp.sendEmail(notifyAddress(), '[AI Avatar Study] Email notifications are on',
+    'You will get an email each time someone finishes the study' +
+    (NOTIFY_ON_DROPOUT ? ', and an hourly check will tell you about people who left without finishing.' : '.') +
+    '\n\nSettings are at the top of Code.gs.');
+  Logger.log('Notifications set up. A test email was sent to ' + notifyAddress());
+}
+
+function minutesSeconds(sec) {
+  var s = Math.round(Number(sec) || 0);
+  return Math.floor(s / 60) + ' min ' + (s % 60) + ' s';
+}
+
+function toMillis(v) {
+  if (v instanceof Date) return v.getTime();
+  var t = Date.parse(v);
+  return isNaN(t) ? 0 : t;
+}
+
+function formatTime(v, tz) {
+  var t = toMillis(v);
+  return t ? Utilities.formatDate(new Date(t), tz, 'd MMM yyyy, HH:mm') : 'unknown';
 }
 
 // ---------------------------------------------------------------- manual setup

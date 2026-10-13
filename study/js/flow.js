@@ -84,7 +84,7 @@ export function startFlow({ config, state, debug, assignmentPromise }) {
 
   // Record where people drop out. pagehide covers closing the tab; visibilitychange
   // covers switching apps on a phone, which is often the last event we get.
-  const reportLeave = () => sendPartial(state, config, ctx.list[state.screen]?.type || '');
+  const reportLeave = () => sendPartial(state, config, ctx.list[state.screen]?.type || '', ctx.list.length);
   window.addEventListener('pagehide', reportLeave);
   document.addEventListener('visibilitychange', () => { if (document.hidden) reportLeave(); });
 

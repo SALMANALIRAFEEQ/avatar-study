@@ -61,6 +61,19 @@ Also save a **partial** payload to sheet `partials` if a participant drops out a
 | ENG_1 to ENG_3 | int 1 to 7 | |
 | PI_1 to PI_3 | int 1 to 7 | |
 
+## Sheet `partials` (drop-out markers, never used in the main analysis)
+
+Sent with `navigator.sendBeacon` when the page is hidden or closed after consent and before the save. One person can have several rows (one per screen where they left the page); the last one shows where they stopped.
+
+| Column | Type | Notes |
+|---|---|---|
+| received_at | ISO 8601 UTC | set by Code.gs |
+| participant_id, app_version, is_test, sequence_id, device_class | | as in `participants` |
+| last_screen | int | 0-based index of the screen they were on |
+| last_screen_type | string | consent / soundcheck / block / video / rating / saving |
+| total_screens | int | number of screens in their run (added 2026-10-13) |
+| started_at, consented_at, sent_at | ISO 8601 UTC | from the browser |
+
 ## Rules
 
 - Store raw numeric answers. Never store computed scale scores in the sheet; analysis computes them.
