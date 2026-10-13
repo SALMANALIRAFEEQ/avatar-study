@@ -7,6 +7,7 @@ import { renderItemsForm, paragraphs, rich } from './render.js';
 import { mountGatedVideo, preloadVideo, preloadImage } from './video.js';
 import { buildPayload, submitPayload, markCompleted, clearProgress } from './storage.js';
 import { icon } from './icons.js';
+import { START_WAIT_MS, randomAssignment } from './assign.js';
 
 // Items with only_position (the attention check) appear only after that video.
 export function visibleItems(subblock, position) {
@@ -75,7 +76,12 @@ export const screens = {
       btn.textContent = 'Starting…';
       const { state } = ctx;
       state.consented_at = nowIso();
-      const assigned = await ctx.assignmentPromise;
+      // The sequence request started when this page opened. Don't keep a participant
+      // waiting for a slow answer: after START_WAIT_MS, assign at random (recorded as such).
+      const assigned = await Promise.race([
+        ctx.assignmentPromise,
+        new Promise((resolve) => setTimeout(() => resolve(null), START_WAIT_MS)),
+      ]) || randomAssignment(ctx.config);
       state.sequence_id = assigned.sequence_id;
       state.assignment_method = assigned.assignment_method;
       state.videos = ctx.config.sequences[state.sequence_id].map((s, i) => {

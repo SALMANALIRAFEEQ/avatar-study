@@ -153,7 +153,7 @@ export async function submitPayload(payload, config) {
 // text/plain avoids the CORS preflight that Apps Script can't answer.
 async function postJson(url, data) {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 20000);
+  const timer = setTimeout(() => ctrl.abort(), 30000); // Apps Script can be slow on mobile data
   try {
     const res = await fetch(url, {
       method: 'POST',
