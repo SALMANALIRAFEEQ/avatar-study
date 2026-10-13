@@ -3,6 +3,9 @@ analysis/data/
 analysis/output/
 .env
 
+# Raw video files and edit masters stay local; the site uses the compressed copies in study/media/
+assets/
+
 # OS / editor files
 .DS_Store
 Thumbs.db

@@ -68,6 +68,8 @@ The URL stays the same.
 ## Good to know
 
 - `APP_VERSION_PREFIX` at the top of `Code.gs` (currently `1a.`) must match the start of `app_version` in the config. If you change the version to `1b.0.0`, update the prefix too, or every submission will be rejected.
-- The list of rating items in `Code.gs` (`RATING_ITEMS`) is fixed to the pilot questionnaire. If items change, update that list as well, or submissions will be rejected.
+- The lists of questions in `Code.gs` (`DEMO_ITEMS`, `RATING_ITEMS` and the column lists) match the pilot questionnaire. If you add or remove a question in the config, update `Code.gs` too and redeploy. Otherwise submissions are rejected, or the new answers are not saved.
+- Values are written under the column with the same name in the header row, so adding a question just adds a column at the end of the sheet. Existing rows never shift.
+- To check which version of the script is live, open the web app URL with `?action=next_sequence&ids=S1` at the end and look at `script_version` in the reply.
 - If the same run arrives twice (for example a retry after a slow connection), the script recognises the participant ID and writes it only once.
 - Never share or commit exports of this Sheet: the repository is public.

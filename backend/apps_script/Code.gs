@@ -1,5 +1,5 @@
 /**
- * Avatar Emotion Pilot Study: data collection web app.
+ * AI Avatar Study: data collection web app.
  *
  * doPost  saves one finished run (1 row in `participants`, 1 row per video in `responses`)
  *         or a drop-out marker (1 row in `partials`).
@@ -14,6 +14,7 @@
  * Do NOT use "New deployment": that creates a new URL and the site stops saving.
  */
 
+var SCRIPT_VERSION = 2;           // reported by doGet, so you can check a redeploy took effect
 var APP_VERSION_PREFIX = '1a.';   // must match the start of app_version in study.config.json
 var MAX_BYTES = 50000;            // bigger payloads are rejected
 var LOCK_WAIT_MS = 20000;
@@ -22,13 +23,23 @@ var SHEET_PARTICIPANTS = 'participants';
 var SHEET_RESPONSES = 'responses';
 var SHEET_PARTIALS = 'partials';
 
-// Fixed column order (docs/DATA_SCHEMA.md). The sheet header is written from these,
-// never from the payload, so a changed payload can't reshuffle columns.
+// Background questions (docs/QUESTIONNAIRE.md, block DEMO). Stored as the option label.
+var DEMO_ITEMS = [
+  'DEMO_age', 'DEMO_gender', 'DEMO_country', 'DEMO_english',
+  'DEMO_education', 'DEMO_occupation',
+  'DEMO_online_shop', 'DEMO_social_media', 'DEMO_ai_tools', 'DEMO_ai_seen'
+];
+
+// Columns (docs/DATA_SCHEMA.md). Values are always written under the column with the
+// same name in the sheet's header row, never by position. A column missing from an
+// existing sheet is added at the end, so adding questions never shifts existing data.
 var PARTICIPANT_COLUMNS = [
   'participant_id', 'app_version', 'is_test', 'started_at', 'consented_at', 'submitted_at',
   'total_duration_s', 'sequence_id', 'assignment_method', 'device_class',
   'sound_check_attempts', 'sound_check_passed',
-  'DEMO_age', 'DEMO_gender', 'DEMO_country', 'DEMO_online_shop', 'DEMO_ai_seen',
+  'DEMO_age', 'DEMO_gender', 'DEMO_country', 'DEMO_english',
+  'DEMO_education', 'DEMO_occupation', 'DEMO_occupation_other',
+  'DEMO_online_shop', 'DEMO_social_media', 'DEMO_ai_tools', 'DEMO_ai_seen',
   'ATT_1', 'att_passed',
   'CMP_trust', 'CMP_buy', 'CMP_why', 'CMP_noticed',
   'completion_code',
@@ -88,23 +99,20 @@ function saveComplete(data) {
   var lock = LockService.getScriptLock();
   lock.waitLock(LOCK_WAIT_MS);
   try {
-    var ps = getSheet(SHEET_PARTICIPANTS, PARTICIPANT_COLUMNS);
+    var ps = prepareSheet(SHEET_PARTICIPANTS, PARTICIPANT_COLUMNS);
     // A retry of a run that was already saved: confirm again, write nothing.
-    if (columnHas(ps, PARTICIPANT_COLUMNS.indexOf('participant_id') + 1, p.participant_id)) {
+    if (columnHas(ps, 'participant_id', p.participant_id)) {
       return reply({ ok: true, participant_id: p.participant_id, duplicate: true });
     }
 
     var now = new Date().toISOString();
-    var prow = PARTICIPANT_COLUMNS.map(function (c) { return c === 'received_at' ? now : cell(p[c]); });
-    var rrows = rs.map(function (r) {
-      return RESPONSE_COLUMNS.map(function (c) { return cell(r[c]); });
-    });
+    var rsSheet = prepareSheet(SHEET_RESPONSES, RESPONSE_COLUMNS);
+    var rrows = rs.map(function (r) { return rowFor(rsSheet.header, r, now); });
 
     // Responses first: if anything fails midway, the participant row (which marks the
     // run as saved) is missing and the site's retry writes everything again.
-    var rsSheet = getSheet(SHEET_RESPONSES, RESPONSE_COLUMNS);
-    rsSheet.getRange(rsSheet.getLastRow() + 1, 1, rrows.length, RESPONSE_COLUMNS.length).setValues(rrows);
-    ps.appendRow(prow);
+    rsSheet.sheet.getRange(rsSheet.sheet.getLastRow() + 1, 1, rrows.length, rsSheet.header.length).setValues(rrows);
+    ps.sheet.appendRow(rowFor(ps.header, p, now));
     SpreadsheetApp.flush();
   } finally {
     lock.releaseLock();
@@ -119,9 +127,8 @@ function savePartial(d) {
   var lock = LockService.getScriptLock();
   lock.waitLock(LOCK_WAIT_MS);
   try {
-    var sheet = getSheet(SHEET_PARTIALS, PARTIAL_COLUMNS);
-    var now = new Date().toISOString();
-    sheet.appendRow(PARTIAL_COLUMNS.map(function (c) { return c === 'received_at' ? now : cell(d[c]); }));
+    var pt = prepareSheet(SHEET_PARTIALS, PARTIAL_COLUMNS);
+    pt.sheet.appendRow(rowFor(pt.header, d, new Date().toISOString()));
   } finally {
     lock.releaseLock();
   }
@@ -139,19 +146,20 @@ function doGet(e) {
   var wantTest = params.test === '1';
 
   // Count completed runs of the same kind, so debug runs rotate among themselves
-  // and never shift the rotation for real participants.
-  var sheet = getSheet(SHEET_PARTICIPANTS, PARTICIPANT_COLUMNS);
+  // and never shift the rotation for real participants. Read only: no lock needed.
   var count = 0;
-  var last = sheet.getLastRow();
-  if (last > 1) {
-    var col = PARTICIPANT_COLUMNS.indexOf('is_test') + 1;
-    var values = sheet.getRange(2, col, last - 1, 1).getValues();
-    for (var i = 0; i < values.length; i++) {
-      var isTest = values[i][0] === true || values[i][0] === 'TRUE';
-      if (isTest === wantTest) count++;
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_PARTICIPANTS);
+  if (sheet && sheet.getLastRow() > 1) {
+    var col = readHeader(sheet).indexOf('is_test') + 1;
+    if (col > 0) {
+      var values = sheet.getRange(2, col, sheet.getLastRow() - 1, 1).getValues();
+      for (var i = 0; i < values.length; i++) {
+        var isTest = values[i][0] === true || values[i][0] === 'TRUE';
+        if (isTest === wantTest) count++;
+      }
     }
   }
-  return reply({ ok: true, sequence_id: ids[count % ids.length], completed: count });
+  return reply({ ok: true, sequence_id: ids[count % ids.length], completed: count, script_version: SCRIPT_VERSION });
 }
 
 // ---------------------------------------------------------------- validation
@@ -166,8 +174,8 @@ function validParticipant(p) {
   if (p.assignment_method === 'debug_forced' && !p.is_test) return false;
   if (['mobile', 'desktop', 'tablet'].indexOf(p.device_class) < 0) return false;
   if (!isIntIn(p.sound_check_attempts, 0, 20) || typeof p.sound_check_passed !== 'boolean') return false;
-  var demo = ['DEMO_age', 'DEMO_gender', 'DEMO_country', 'DEMO_online_shop', 'DEMO_ai_seen'];
-  for (var i = 0; i < demo.length; i++) if (!isShortString(p[demo[i]], 60)) return false;
+  for (var i = 0; i < DEMO_ITEMS.length; i++) if (!isShortString(p[DEMO_ITEMS[i]], 80)) return false;
+  if (!isText(p.DEMO_occupation_other, 100)) return false;
   if (!(p.ATT_1 === null || isIntIn(p.ATT_1, 1, 7)) || typeof p.att_passed !== 'boolean') return false;
   if (['video1', 'video2', 'none'].indexOf(p.CMP_trust) < 0 || ['video1', 'video2', 'none'].indexOf(p.CMP_buy) < 0) return false;
   if (!isText(p.CMP_why, 500) || !isText(p.CMP_noticed, 500)) return false;
@@ -209,19 +217,36 @@ function cell(v) {
   return v;
 }
 
-function getSheet(name, columns) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(name) || ss.insertSheet(name);
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(columns);
-    sheet.setFrozenRows(1);
-  }
-  return sheet;
+function readHeader(sheet) {
+  if (sheet.getLastRow() === 0 || sheet.getLastColumn() === 0) return [];
+  return sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(String);
 }
 
-function columnHas(sheet, col, value) {
+// Returns { sheet, header }, creating the sheet and adding any missing columns
+// (at the end) to its header row. Call inside the lock.
+function prepareSheet(name, columns) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(name) || ss.insertSheet(name);
+  var header = readHeader(sheet);
+  var missing = columns.filter(function (c) { return header.indexOf(c) < 0; });
+  if (missing.length) {
+    sheet.getRange(1, header.length + 1, 1, missing.length).setValues([missing]);
+    header = header.concat(missing);
+    if (sheet.getFrozenRows() === 0) sheet.setFrozenRows(1);
+  }
+  return { sheet: sheet, header: header };
+}
+
+// One row in the sheet's own column order, matched by column name.
+function rowFor(header, obj, now) {
+  return header.map(function (h) { return h === 'received_at' ? now : cell(obj[h]); });
+}
+
+function columnHas(prepared, columnName, value) {
+  var sheet = prepared.sheet;
+  var col = prepared.header.indexOf(columnName) + 1;
   var last = sheet.getLastRow();
-  if (last < 2) return false;
+  if (col < 1 || last < 2) return false;
   var found = sheet.getRange(2, col, last - 1, 1).createTextFinder(value).matchEntireCell(true).findNext();
   return found !== null;
 }
@@ -230,13 +255,13 @@ function reply(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
-// ---------------------------------------------------------------- manual test
+// ---------------------------------------------------------------- manual setup
 
-// Run this once from the editor (select testSetup, press Run) to create the three sheets
-// with headers and grant the script permission to edit the spreadsheet.
+// Run this from the editor (select testSetup, press Run) to create the three sheets,
+// or to add new columns to existing ones, and to grant the script permission.
 function testSetup() {
-  getSheet(SHEET_PARTICIPANTS, PARTICIPANT_COLUMNS);
-  getSheet(SHEET_RESPONSES, RESPONSE_COLUMNS);
-  getSheet(SHEET_PARTIALS, PARTIAL_COLUMNS);
-  Logger.log('Sheets ready.');
+  prepareSheet(SHEET_PARTICIPANTS, PARTICIPANT_COLUMNS);
+  prepareSheet(SHEET_RESPONSES, RESPONSE_COLUMNS);
+  prepareSheet(SHEET_PARTIALS, PARTIAL_COLUMNS);
+  Logger.log('Sheets ready (script version ' + SCRIPT_VERSION + ').');
 }

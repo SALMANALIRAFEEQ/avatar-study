@@ -25,7 +25,7 @@ Work one step at a time. After each step, tell Salman what to test and wait for 
 - [ ] Cannot continue past a video before it ends (outside debug mode); seeking forward is blocked.
 - [ ] Required items block continuing; nothing is pre selected.
 - [ ] After a run, `participants` has 1 row and `responses` has 2 rows with every column in DATA_SCHEMA.md filled correctly.
-- [ ] 8 consecutive test runs produce each sequence S1 to S4 exactly twice.
+- [ ] 8 consecutive test runs produce each sequence S1 and S2 exactly four times (one product, two orders since 2026-10-13).
 - [ ] With network turned off at submit, the payload is queued and sent on next load; no completion code shown until saved.
 - [ ] `?debug=1` rows have `is_test = true`.
 - [ ] Changing a question's text in config changes it on screen with no code change.

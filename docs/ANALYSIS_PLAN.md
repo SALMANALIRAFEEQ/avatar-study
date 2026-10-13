@@ -39,9 +39,9 @@ For each outcome (MC_warm, MC_expressive, TR, NAT, LIK, ENG, PI): warm vs neutra
 
 Manipulation check counts as successful if MC_warm is higher for warm with d_z CI excluding 0. If it fails, say so plainly: the other results then can't be interpreted as effects of warmth.
 
-## 7. Order, product and carryover checks
+## 7. Order and carryover checks
 
-- Linear mixed model per outcome (statsmodels MixedLM): `score ~ condition + position + product + (1 | participant)`. Report the condition coefficient and whether position or product effects are large.
+- Linear mixed model per outcome (statsmodels MixedLM): `score ~ condition + position + (1 | participant)`. Report the condition coefficient and whether position effects are large. (Changed 2026-10-13: the product term was removed because only one product was produced; see STUDY_DESIGN.md.)
 - Between subjects on first video only: Welch t test warm vs neutral, with d and CI. Expect wide CIs; this is a carryover sanity check.
 
 ## 8. Forced choices
@@ -60,6 +60,6 @@ Watch time and replays by condition (descriptives only). Rating block completion
 
 ## 11. Report
 
-`report.html` sections: Overview (pilot, N, design), Exclusions, Manipulation check, Main results table (mean per condition, difference, CI, d_z, p, Wilcoxon p), Figures, Order and product checks, Forced choice, Reliability, Behaviour, Limitations (small convenience sample, two products, AI disclosure, single avatar, no correction for multiple tests), Next steps for the full study (sample size estimate from observed d_z for 80% power, using a standard power calculation).
+`report.html` sections: Overview (pilot, N, design), Exclusions, Manipulation check, Main results table (mean per condition, difference, CI, d_z, p, Wilcoxon p), Figures, Order checks, Forced choice, Reliability, Behaviour, Limitations (small convenience sample, one product shown twice (participants likely notice the style difference), known differences between the two videos (see STUDY_DESIGN.md, "As produced"), AI disclosure, single avatar, no correction for multiple tests), Next steps for the full study (sample size estimate from observed d_z for 80% power, using a standard power calculation).
 
 Wording rules: say "in this pilot", "suggests", "estimated"; never "proves". Do not call a result significant without also giving the effect size and CI.

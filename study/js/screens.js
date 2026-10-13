@@ -3,7 +3,7 @@
 // except for short UI instructions (buttons, hints, error messages).
 
 import { el, nowIso, shuffle, completionCode } from './util.js';
-import { renderItemsForm, paragraphs } from './render.js';
+import { renderItemsForm, paragraphs, rich } from './render.js';
 import { mountGatedVideo, preloadVideo, preloadImage } from './video.js';
 import { buildPayload, submitPayload, markCompleted, clearProgress } from './storage.js';
 import { icon } from './icons.js';
@@ -27,36 +27,34 @@ function videoLabel(ctx, index) {
   return `Video ${index + 1} of ${ctx.state.videos.length}`;
 }
 
-// Icon + small label + title at the top of every screen.
-function screenHead({ iconName, eyebrow, title, lead, extra }) {
-  return el('header', { class: 'screen-head' },
-    el('div', { class: 'head-row' },
-      icon(iconName, { size: 20, className: 'head-icon' }),
-      eyebrow && el('p', { class: 'eyebrow' }, eyebrow)),
-    el('h1', {}, title),
+// Small context line, title, optional lead paragraph(s).
+// Title and intro may contain **highlighted** words from the config.
+function pageHead({ kicker, title, lead, intro, extra }) {
+  return el('header', { class: 'page-head' },
+    kicker && el('p', { class: 'kicker' }, kicker),
+    el('h1', {}, rich(title)),
     lead && el('p', { class: 'lead' }, lead),
+    intro && el('div', { class: 'intro' }, ...paragraphs(intro)),
     extra);
 }
 
-const arrowBtn = (label, attrs = {}) =>
-  el('button', { type: 'button', class: 'btn btn-primary', ...attrs }, el('span', {}, label), icon('arrow', { size: 20 }));
+const primaryBtn = (label, attrs = {}) =>
+  el('button', { type: 'button', class: 'btn btn-primary', ...attrs }, label);
 
 // Completion code with a copy button. Clipboard needs https; otherwise select the text.
 function codeBox(code) {
   const value = el('span', { class: 'code-value' }, code);
-  const copyLabel = el('span', {}, 'Copy code');
-  const copyBtn = el('button', { type: 'button', class: 'copy-btn' }, icon('copy', { size: 18 }), copyLabel);
+  const copyBtn = el('button', { type: 'button', class: 'btn btn-secondary btn-compact' }, 'Copy code');
   copyBtn.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(code);
-      copyLabel.textContent = 'Copied';
-      copyBtn.classList.add('copied');
+      copyBtn.textContent = 'Copied';
     } catch {
       const range = document.createRange();
       range.selectNodeContents(value);
       getSelection().removeAllRanges();
       getSelection().addRange(range);
-      copyLabel.textContent = 'Selected, copy it now';
+      copyBtn.textContent = 'Selected, copy it now';
     }
   });
   return el('div', { class: 'code-box' },
@@ -69,12 +67,12 @@ export const screens = {
   consent(root, screen, ctx) {
     const { consent } = ctx.config;
     const box = el('input', { type: 'checkbox', id: 'consent-box' });
-    const btn = arrowBtn('Start', { disabled: true });
+    const btn = primaryBtn('Start the study', { disabled: true });
     box.addEventListener('change', () => { btn.disabled = !box.checked; });
 
     btn.addEventListener('click', async () => {
       btn.disabled = true;
-      btn.firstChild.textContent = 'Starting…';
+      btn.textContent = 'Starting…';
       const { state } = ctx;
       state.consented_at = nowIso();
       const assigned = await ctx.assignmentPromise;
@@ -104,32 +102,32 @@ export const screens = {
       ctx.next();
     });
 
+    const section = (title, ...content) => el('section', { class: 'section' }, title && el('h2', {}, title), ...content);
+
     // Every section is optional so an older or shorter config still renders.
     root.append(
-      screenHead({ iconName: 'sparkle', title: consent.title, lead: consent.lead }),
-      consent.highlights && el('ul', { class: 'chips' },
-        consent.highlights.map((h) => el('li', { class: 'chip' }, icon(h.icon, { size: 18 }), el('span', {}, h.text)))),
-      consent.steps && el('section', { class: 'card' },
-        el('h2', {}, consent.steps_title),
+      pageHead({ title: consent.title, intro: consent.intro || (consent.lead ? [consent.lead] : null) }),
+      consent.highlights && el('dl', { class: 'facts' },
+        consent.highlights.map((h) => el('div', { class: 'fact' },
+          h.label && el('dt', {}, h.label),
+          el('dd', {}, h.text)))),
+      consent.steps && section(consent.steps_title,
         el('ol', { class: 'steps' },
           consent.steps.map((s, i) => el('li', { class: 'step' },
-            el('span', { class: 'step-icon' }, icon(s.icon, { size: 18 }), el('span', { class: 'step-num' }, i + 1)),
+            el('span', { class: 'step-num', 'aria-hidden': 'true' }, String(i + 1)),
             el('div', {},
               el('p', { class: 'step-title' }, s.title),
               el('p', { class: 'step-text' }, s.text)))))),
-      consent.tips && el('section', { class: 'card card-tint' },
-        el('h2', {}, consent.tips_title),
-        el('ul', { class: 'tips' },
-          consent.tips.map((t) => el('li', {}, icon('check', { size: 16 }), el('span', {}, t))))),
-      el('section', { class: 'card prose' },
-        consent.body_title && el('h2', {}, consent.body_title),
-        ...paragraphs(consent.body)),
-      el('label', { class: 'consent-check', for: 'consent-box' },
-        box,
-        el('span', { class: 'check-box', 'aria-hidden': 'true' }, icon('check', { size: 16 })),
-        el('span', {}, consent.checkbox)),
-      btn,
-      el('p', { class: 'hint' }, 'If you do not agree, simply close this page.'),
+      consent.tips && section(consent.tips_title,
+        el('ul', { class: 'list' }, consent.tips.map((t) => el('li', {}, t)))),
+      section(consent.body_title, el('div', { class: 'prose prose-small' }, ...paragraphs(consent.body))),
+      el('div', { class: 'consent-block' },
+        el('label', { class: 'checkbox', for: 'consent-box' },
+          box,
+          el('span', { class: 'checkbox-mark', 'aria-hidden': 'true' }),
+          el('span', { class: 'checkbox-text' }, consent.checkbox)),
+        btn,
+        el('p', { class: 'hint' }, 'If you do not want to take part, simply close this page.')),
     );
   },
 
@@ -143,20 +141,24 @@ export const screens = {
     audio.preload = 'auto';
     let played = false;
 
-    const playBtn = el('button', { type: 'button', class: 'sound-btn', 'aria-label': 'Play sound' },
-      icon('volume', { size: 34 }));
-    const playLabel = el('p', { class: 'sound-label' }, 'Tap to play the sound');
-    const panel = el('div', { class: 'sound-panel' }, playBtn, playLabel);
-    audio.addEventListener('playing', () => playBtn.classList.add('is-playing'));
-    audio.addEventListener('ended', () => playBtn.classList.remove('is-playing'));
-    audio.addEventListener('pause', () => playBtn.classList.remove('is-playing'));
+    const playBtn = el('button', { type: 'button', class: 'btn btn-secondary btn-compact' },
+      icon('play', { size: 18 }), el('span', {}, 'Play sound'));
+    const status = el('p', { class: 'audio-status', role: 'status' }, 'Not played yet');
+    const panel = el('div', { class: 'audio-panel' }, playBtn, status);
+    audio.addEventListener('playing', () => { status.textContent = 'Playing…'; });
+    audio.addEventListener('ended', () => { status.textContent = 'Played. You can play it again if you need to.'; });
+
     const feedback = el('p', { class: 'form-error', role: 'alert', hidden: true });
     const options = stableOrder(ctx, 'soundcheck', sc.options, true);
-    const list = el('div', { class: 'choice-list' },
-      options.map((word) => el('label', { class: 'choice' },
+    const list = el('div', { class: 'options' },
+      options.map((word) => el('label', { class: 'option' },
         el('input', { type: 'radio', name: 'soundcheck', value: word, disabled: true }),
-        el('span', { class: 'choice-label' }, word))));
-    const checkBtn = el('button', { type: 'button', class: 'btn btn-primary', disabled: true }, 'Check');
+        el('span', { class: 'option-mark', 'aria-hidden': 'true' }),
+        el('span', { class: 'option-text' }, word))));
+    const question = el('fieldset', { class: 'item' },
+      el('legend', { class: 'item-text' }, 'Which word did you hear?'),
+      list);
+    const checkBtn = primaryBtn('Check answer', { disabled: true });
     const attemptsLeft = () => sc.max_attempts - state.sound_check_attempts;
 
     playBtn.addEventListener('click', () => {
@@ -165,7 +167,6 @@ export const screens = {
         feedback.textContent = 'The sound could not be played. Please check your connection and try again.';
         feedback.hidden = false;
       });
-      playLabel.textContent = 'Tap to play again';
       if (!played) {
         played = true;
         list.querySelectorAll('input').forEach((i) => { i.disabled = false; });
@@ -193,7 +194,7 @@ export const screens = {
         // Out of tries: let them continue; the analysis excludes people who never passed.
         feedback.textContent = 'We could not confirm your sound. The videos have speech, so please make sure your sound is on before continuing.';
         feedback.hidden = false;
-        list.closest('fieldset').hidden = true;
+        question.hidden = true;
         panel.hidden = true;
         checkBtn.textContent = 'Continue';
         checkBtn.disabled = false;
@@ -202,14 +203,13 @@ export const screens = {
     });
 
     root.append(
-      screenHead({
-        iconName: 'headphones',
-        eyebrow: 'Before we start',
+      pageHead({
+        kicker: 'Before you start',
         title: 'Sound check',
-        lead: 'The videos have speech. Please turn your sound on or use headphones, play the sound, then choose the word you hear.',
+        lead: 'The videos have speech. Turn your sound on or use headphones, play the sound, then choose the word you hear.',
       }),
       panel,
-      el('fieldset', { class: 'item' }, el('legend', { class: 'item-text' }, 'Which word did you hear?'), list),
+      question,
       feedback,
       checkBtn,
     );
@@ -218,8 +218,11 @@ export const screens = {
 
   block(root, screen, ctx) {
     const block = ctx.config.blocks[screen.block];
-    const ids = block.items.map((it) => it.id);
-    const order = stableOrder(ctx, screen.block, ids, block.shuffle);
+    // A block can be split over several pages (config "pages"); each page is its own screen.
+    const page = block.pages ? block.pages[screen.page] : null;
+    const ids = page ? page.items : block.items.map((it) => it.id);
+    const key = page ? `${screen.block}_p${screen.page + 1}` : screen.block;
+    const order = stableOrder(ctx, key, ids, block.shuffle);
     const items = order.map((id) => block.items.find((it) => it.id === id));
 
     let thumbs = null;
@@ -228,15 +231,15 @@ export const screens = {
         ctx.state.videos.map((vd, i) => el('figure', { class: 'thumb' },
           el('img', {
             src: vd.thumb, alt: `Still from video ${i + 1}`, loading: 'eager',
-            onerror: (e) => { e.target.style.visibility = 'hidden'; }, // grey box instead of a broken icon
+            onerror: (e) => { e.target.style.visibility = 'hidden'; }, // empty frame instead of a broken icon
           }),
           el('figcaption', {}, `Video ${i + 1}`))));
     }
 
     const form = renderItemsForm({
-      header: screenHead({
-        iconName: block.icon || (block.show_thumbnails ? 'compare' : 'user'),
-        title: block.title,
+      header: pageHead({
+        kicker: page && `${block.title} · Page ${screen.page + 1} of ${block.pages.length}`,
+        title: (page && page.title) || block.title,
         extra: thumbs,
       }),
       items,
@@ -250,15 +253,19 @@ export const screens = {
 
   video(root, screen, ctx) {
     const vd = ctx.state.videos[screen.index];
-    const continueBtn = arrowBtn('Continue', { hidden: !vd.watch_completed });
-    const hintText = el('span', {}, 'Please watch the whole video with sound on. The Continue button appears when it ends.');
-    const hint = el('p', { class: 'hint hint-box' }, icon('headphones', { size: 18 }), hintText);
+    const vs = ctx.config.video_screen || {};
+    const hintDone = vs.hint_done || 'You can watch it again if you like, or continue.';
+    const continueBtn = primaryBtn('Continue', { hidden: !vd.watch_completed });
+    const hint = el('p', { class: 'player-hint' },
+      vd.watch_completed ? hintDone : (vs.hint || 'Watch to the end with the sound on. The Continue button appears when the video ends.'));
     const playerBox = el('div');
 
     continueBtn.addEventListener('click', () => ctx.next());
 
     root.append(
-      screenHead({ iconName: 'video', eyebrow: videoLabel(ctx, screen.index), title: 'Please watch this video' }),
+      pageHead({ kicker: videoLabel(ctx, screen.index), title: vs.title || 'Please watch this video' }),
+      // Shown before every video: where to direct attention (text in config).
+      vs.note && el('p', { class: 'note' }, rich(vs.note)),
       playerBox,
       hint,
       continueBtn,
@@ -272,7 +279,7 @@ export const screens = {
       onProgress: ctx.persist,
       onEnded: () => {
         continueBtn.hidden = false;
-        hintText.textContent = 'You can watch it again if you like, or continue.';
+        hint.textContent = hintDone;
       },
     });
 
@@ -302,17 +309,11 @@ export const screens = {
     const order = stableOrder(ctx, key, visibleItems(sb, vd.position).map((it) => it.id), sb.shuffle);
     const items = order.map((id) => sb.items.find((it) => it.id === id));
 
-    const dots = el('div', { class: 'part-dots', 'aria-hidden': 'true' },
-      Array.from({ length: screen.parts }, (_, i) =>
-        el('span', { class: i + 1 < screen.part ? 'dot done' : i + 1 === screen.part ? 'dot current' : 'dot' })));
-
     root.append(
       renderItemsForm({
-        header: screenHead({
-          iconName: 'clipboard',
-          eyebrow: `${videoLabel(ctx, screen.index)} · Part ${screen.part} of ${screen.parts}`,
+        header: pageHead({
+          kicker: `${videoLabel(ctx, screen.index)} · Page ${screen.part} of ${screen.parts}`,
           title: config.blocks.RATING.title,
-          extra: dots,
         }),
         intro: sb.intro,
         items,
@@ -332,13 +333,14 @@ export const screens = {
 
   saving(root, screen, ctx) {
     const { state, config } = ctx;
-    const status = el('p', { role: 'status' }, 'Saving your answers. Please keep this page open…');
-    const retryBtn = el('button', { type: 'button', class: 'btn btn-primary', hidden: true }, 'Try again');
-    root.append(el('div', { class: 'center-screen' },
-      el('div', { class: 'spinner spinner-lg', 'aria-hidden': 'true' }),
-      el('h1', {}, 'Almost done'),
-      status,
-      retryBtn));
+    const statusText = el('span', { role: 'status' }, 'Saving your answers. Please keep this page open.');
+    const spinner = el('span', { class: 'spinner', 'aria-hidden': 'true' });
+    const retryBtn = primaryBtn('Try again', { hidden: true });
+    root.append(
+      pageHead({ title: 'Almost done' }),
+      el('p', { class: 'status-line' }, spinner, statusText),
+      retryBtn,
+    );
 
     // Fixed once, so a retry or reload sends the same submission.
     if (!state.submitted_at) state.submitted_at = nowIso();
@@ -347,7 +349,8 @@ export const screens = {
 
     async function attempt() {
       retryBtn.hidden = true;
-      status.textContent = 'Saving your answers. Please keep this page open…';
+      spinner.hidden = false;
+      statusText.textContent = 'Saving your answers. Please keep this page open.';
       try {
         const payload = buildPayload(state, config);
         const res = await submitPayload(payload, config);
@@ -357,7 +360,8 @@ export const screens = {
         ctx.next();
       } catch (err) {
         console.error(err);
-        status.textContent = 'Your answers could not be saved yet. Please check your connection and tap Try again.';
+        spinner.hidden = true;
+        statusText.textContent = 'Your answers could not be saved yet. Please check your connection and tap Try again.';
         retryBtn.hidden = false;
       }
     }
@@ -375,9 +379,8 @@ export const screens = {
     }
 
     root.append(
-      el('div', { class: 'done-badge' }, icon('check', { size: 40 })),
-      el('h1', { class: 'center' }, d.title),
-      el('div', { class: 'card prose' }, ...paragraphs(d.body)),
+      pageHead({ kicker: 'Study complete', title: d.title }),
+      el('div', { class: 'prose' }, ...paragraphs(d.body)),
     );
     if (d.show_completion_code) root.append(codeBox(state.completion_code));
     root.append(el('p', { class: 'hint' }, 'You can now close this page.'));

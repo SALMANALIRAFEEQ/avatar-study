@@ -83,9 +83,16 @@ export function buildPayload(state, config) {
     sound_check_attempts: state.sound_check_attempts,
     sound_check_passed: state.sound_check_passed,
   };
-  for (const it of config.blocks.DEMO.items) participant[it.id] = state.answers[it.id] ?? null;
+  // Each item is one column; an "Other" write-in gets its own column right after it.
+  const addBlock = (items) => {
+    for (const it of items) {
+      participant[it.id] = state.answers[it.id] ?? (it.type === 'text' ? '' : null);
+      if (it.other) participant[it.other.id] = state.answers[it.other.id] ?? '';
+    }
+  };
+  addBlock(config.blocks.DEMO.items);
   Object.assign(participant, att, { att_passed: attPassed });
-  for (const it of config.blocks.CMP.items) participant[it.id] = state.answers[it.id] ?? (it.type === 'text' ? '' : null);
+  addBlock(config.blocks.CMP.items);
   participant.completion_code = state.completion_code;
 
   const responses = state.videos.map((vd) => {

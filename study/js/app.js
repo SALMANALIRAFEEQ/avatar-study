@@ -30,6 +30,24 @@ function validateConfig(c) {
   for (const sb of c.blocks.RATING?.subblocks || []) {
     if (!c.scales[sb.scale]) problems.push(`RATING ${sb.id}: unknown scale "${sb.scale}"`);
   }
+  for (const [bid, b] of Object.entries(c.blocks)) {
+    for (const it of b.items || []) {
+      if (it.other && !(it.other.id && it.options?.[it.other.index] !== undefined)) {
+        problems.push(`${bid} ${it.id}: "other" needs an id and a valid option index`);
+      }
+    }
+    // Every item must be on exactly one page, or it would never be asked.
+    if (b.pages) {
+      const onPages = b.pages.flatMap((pg) => pg.items);
+      for (const it of b.items) {
+        const n = onPages.filter((id) => id === it.id).length;
+        if (n !== 1) problems.push(`${bid}: item ${it.id} is on ${n} pages (must be exactly 1)`);
+      }
+      for (const id of onPages) {
+        if (!b.items.some((it) => it.id === id)) problems.push(`${bid}: page lists unknown item ${id}`);
+      }
+    }
+  }
   return problems;
 }
 

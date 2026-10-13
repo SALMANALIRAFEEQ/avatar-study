@@ -4,7 +4,9 @@ The site is plain HTML/CSS/JS served by GitHub Pages straight from the `main` br
 
 ## Before going live (checklist)
 
-- [ ] Real videos, thumbnails and sound check clip are in `study/media/` (H.264 + AAC MP4, about 15 MB or less each), with the file names listed in `study/config/study.config.json`
+- [x] Real videos and thumbnails are in `study/media/` (Kora neutral and warm, 720p, about 2 MB each)
+- [ ] Salman has reviewed the edited neutral video (`assets/Kora Video 3.mp4`)
+- [ ] Sound check clip: the computer-voice "orange" is fine to keep, or replace `study/media/soundcheck.mp3`
 - [ ] `endpoint_url` in the config is your Apps Script web app URL
 - [ ] Test rows deleted from the Sheet, or left there (the analysis drops `is_test = TRUE` anyway)
 - [ ] A full run on an Android phone and on a desktop, using the live URL
@@ -53,4 +55,4 @@ Local runs also save to the real Sheet while `endpoint_url` is set. Use `?debug=
 
 ## Placeholder media
 
-`tools/make_placeholder_media.py` regenerates the placeholder videos and sound check clip (needs ffmpeg). Replace them with the real files before launch.
+`tools/make_placeholder_media.py` makes placeholder videos and a sound check clip for testing (needs ffmpeg). It skips files that already exist, so it never overwrites the real videos unless you pass `--force`.

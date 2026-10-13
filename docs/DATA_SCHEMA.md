@@ -22,17 +22,19 @@ Also save a **partial** payload to sheet `partials` if a participant drops out a
 | consented_at | ISO 8601 UTC | |
 | submitted_at | ISO 8601 UTC | |
 | total_duration_s | number | consent to submit |
-| sequence_id | string | S1 to S4 |
+| sequence_id | string | S1 or S2 (one product, two orders; S1 to S4 before 2026-10-13) |
 | assignment_method | string | "rotation" or "random_fallback" |
 | device_class | string | "mobile" / "desktop" / "tablet" |
 | sound_check_attempts | int | |
 | sound_check_passed | bool | |
-| DEMO_age, DEMO_gender, DEMO_country, DEMO_online_shop, DEMO_ai_seen | string | stored as the option label |
+| DEMO_age, DEMO_gender, DEMO_country, DEMO_english, DEMO_education, DEMO_occupation, DEMO_online_shop, DEMO_social_media, DEMO_ai_tools, DEMO_ai_seen | string | stored as the option label |
+| DEMO_occupation_other | string | write-in text when DEMO_occupation = "Other", otherwise empty |
 | ATT_1 | int | raw answer |
 | att_passed | bool | ATT_1 == 5 |
 | CMP_trust, CMP_buy | string | "video1" / "video2" / "none" |
 | CMP_why, CMP_noticed | string | free text, trimmed |
 | completion_code | string | short random code, e.g. "KL7Q2M" |
+| received_at | ISO 8601 UTC | when the sheet received the row (set by Code.gs, not the browser) |
 
 ## Sheet `responses` (one row per participant per video)
 
@@ -63,5 +65,5 @@ Also save a **partial** payload to sheet `partials` if a participant drops out a
 
 - Store raw numeric answers. Never store computed scale scores in the sheet; analysis computes them.
 - Times in UTC.
-- If the sheet columns don't exist yet, Code.gs creates the header row from the payload keys on first write, in a fixed column order defined in Code.gs (not payload order).
+- Code.gs writes every value under the column with the same name in the sheet's header row, never by position. If a column doesn't exist yet, it is added at the end of the header (a new sheet gets the column order defined in Code.gs). Adding questions therefore never shifts existing data.
 - Analysis reads a CSV export of each sheet (`analysis/data/participants.csv`, `analysis/data/responses.csv`).

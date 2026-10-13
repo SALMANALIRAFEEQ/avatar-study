@@ -19,24 +19,26 @@ It is **exploratory**. It is not powered to prove anything, and the write up mus
 
 ## Design
 
-**Within subjects, 2 × 2 counterbalanced.** Each participant sees two videos: product A in one style and product B in the other. Using two different products avoids showing the same script twice, which participants would notice.
+**Within subjects, one product, order counterbalanced.** Each participant watches both versions of the same product video (Kora bottle): one with the neutral presenter style and one with the warm style.
 
-Four sequences, assigned in rotation so each is used equally:
+> Changed 2026-10-13 (Salman's decision, app_version 1a.2.0). The second product (Lumo lamp) was not produced, so the original 2 × 2 design (product A in one style, product B in the other) was replaced by this one. As a result, participants see the same product and nearly the same script twice, so they are likely to notice that the presenter's style differs. That raises the risk of demand effects, and the second viewing is a familiar one. Report this as a limitation; the first-video ratings (between subjects) are the cleaner check.
+
+Two sequences, assigned in rotation so each is used equally:
 
 | Sequence | Video 1 | Video 2 |
 |---|---|---|
-| S1 | Product A, neutral | Product B, warm |
-| S2 | Product A, warm | Product B, neutral |
-| S3 | Product B, neutral | Product A, warm |
-| S4 | Product B, warm | Product A, neutral |
+| S1 | Kora, neutral | Kora, warm |
+| S2 | Kora, warm | Kora, neutral |
 
 Why within subjects: with 20 to 40 participants, a between subjects design would have very little power. Within subjects lets each person serve as their own baseline. First video ratings can still be analyzed between subjects as a carryover check.
 
-**Assignment:** the Apps Script `doGet` returns the next sequence based on the count of completed, non test submissions (count mod 4). If the request fails, fall back to random assignment and record `assignment_method = "random_fallback"`.
+**Assignment:** the Apps Script `doGet` returns the next sequence based on the count of completed, non test submissions (count mod 2, the number of sequences). If the request fails, fall back to random assignment and record `assignment_method = "random_fallback"`.
 
-## Stimuli (Salman produces these; 4 videos)
+## Stimuli
 
-- **Products:** two fictional products of similar price and appeal, so brand familiarity plays no role.
+### Planned specification
+
+- **Products:** two fictional products of similar price and appeal, so brand familiarity plays no role. (Only product A was produced; see "As produced" below.)
   - Product A: "Kora" insulated water bottle
   - Product B: "Lumo" rechargeable desk lamp
 - **Same across all four videos:** same avatar, same voice, same background, same framing, same resolution, same script structure, length within 2 seconds of each other (target 30 to 40 s).
@@ -46,6 +48,22 @@ Why within subjects: with 20 to 40 participants, a between subjects design would
 - Script per product: about 70 to 90 words. Same claims in both styles, word for word.
 - Export H.264 MP4, 720p, AAC audio, under about 15 MB.
 - Also produce a 3 second sound check clip of a voice saying one word (e.g. "orange").
+
+### As produced (2026-10-13)
+
+- **Source files** (kept locally in `assets/`, not in the repository): `Kora Video 1.mp4` = neutral, `Kora video 2.mp4` = warm (mapping confirmed by Salman). Generated with Google's video tool; 1080p, burned-in captions.
+- **Script fix:** the neutral version contained one sentence the warm version does not ("Experience perfect temperature all day long."). It was cut out at a shot change, with sound and picture kept in sync: `assets/Kora Video 3.mp4` (full quality master), used for `study/media/A_neutral.mp4`. Salman to review the edit.
+- **Length:** neutral 25.7 s, warm 27.4 s (within 2 s of each other; shorter than the 30 to 40 s target).
+- **Web versions** (`study/media/`): 1280 × 720 H.264, AAC 128 kb/s, constant 30 fps, fast start, subtitle track and metadata removed. Loudness matched at -16.5 LUFS (warm turned down 1.8 dB, neutral 0.6 dB). Only the overall level changed; intonation is untouched.
+- **Thumbnails:** a frame at 4.5 s from each video, where both presenters say the same sentence.
+- **Known remaining differences** (can't be fixed by editing; report them, or regenerate the videos):
+  - background tone: cool grey (neutral) vs warmer beige (warm)
+  - the presenter's face looks slightly different between the two generations
+  - opening line: "Meet Kora," (neutral) vs "Kora. Meet Kora." (warm)
+  - price spoken as "Rs 2,900" (neutral) vs "2900 rupees" (warm)
+  - the burned-in captions highlight different words
+- **Both** videos show the caption typo "Meat Kora" (for "Meet Kora"). It's equal across conditions, but visible.
+- **Sound check clip:** computer voice (Windows speech) saying "orange".
 
 ## Participant flow
 

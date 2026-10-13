@@ -6,12 +6,34 @@ Scale wording and anchors below are what participants see. "Adapted" means the c
 
 ## Block DEMO: About you (once, before videos)
 
+Shown over three pages, in this order. Items are not shuffled.
+
+Changed 2026-10-13 at Salman's request (app_version 1a.1.0): added DEMO_english, DEMO_education, DEMO_occupation (with write-in DEMO_occupation_other), DEMO_social_media and DEMO_ai_tools, and split the block over three pages.
+
+**Page 1: A few details about you**
+
 | ID | Question | Response |
 |---|---|---|
 | DEMO_age | Your age | 18 to 24 / 25 to 34 / 35 to 44 / 45+ |
 | DEMO_gender | Gender | Woman / Man / Prefer to self describe / Prefer not to say |
 | DEMO_country | Country you live in | Pakistan / Other (no free text) |
+| DEMO_english | How comfortable are you understanding spoken English? | Very comfortable / Comfortable / Somewhat comfortable / Not comfortable |
+
+**Page 2: Education and work**
+
+| ID | Question | Response |
+|---|---|---|
+| DEMO_education | Highest level of education you have completed | Secondary school (Matric / O Levels) or less / Intermediate (FA / FSc / A Levels) / Bachelor's degree / Master's degree or higher / Prefer not to say |
+| DEMO_occupation | What do you currently do? | Student / Employed (public / government sector) / Employed (private sector) / Self-employed / business owner / Not currently working / Other |
+| DEMO_occupation_other | Please tell us what you do | Free text, max 100 chars. Shown and required only when DEMO_occupation = Other; empty otherwise |
+
+**Page 3: Online habits**
+
+| ID | Question | Response |
+|---|---|---|
 | DEMO_online_shop | How often do you buy things online? | Never / A few times a year / Monthly / Weekly or more |
+| DEMO_social_media | On a typical day, how much time do you spend on social media? | Less than 1 hour / 1 to 2 hours / 2 to 4 hours / More than 4 hours |
+| DEMO_ai_tools | How often do you use AI tools such as ChatGPT or Gemini? | Never / Rarely / A few times a month / Weekly / Daily |
 | DEMO_ai_seen | Before today, had you seen videos with AI generated presenters? | No / Not sure / Yes, a few / Yes, often |
 | DEMO_device_note | (not a question; device class recorded automatically) | |
 
@@ -91,12 +113,22 @@ Show a still thumbnail of each presenter (frame from each video) labeled "Video 
 
 | ID | Question | Response |
 |---|---|---|
-| CMP_trust | Which presenter did you trust more? | Video 1 / Video 2 / No difference |
-| CMP_buy | Which video made you more likely to buy the product? | Video 1 / Video 2 / No difference |
+| CMP_trust | Which presenter did you trust more? | Video 1 / Video 2 / No difference / not sure |
+| CMP_buy | Which video made you more likely to buy the product? | Video 1 / Video 2 / No difference / not sure |
 | CMP_why | In a sentence or two, what made the difference for you? | Free text, optional, max 500 chars |
 | CMP_noticed | Did you notice any differences between the two presenters? If yes, what? | Free text, optional, max 500 chars |
 
-The analysis maps Video 1 / Video 2 back to condition using the participant's sequence.
+The analysis maps Video 1 / Video 2 back to condition using the participant's sequence. The third option is stored as `none`. Its label became "No difference / not sure" on 2026-10-13 (stored value unchanged), so it also covers people who can't tell.
+
+Rating scales have no "don't know" option on purpose: each has a neutral midpoint, and a "don't know" would create missing values in the paired comparison.
+
+## Instruction shown above each video
+
+Added 2026-10-13 at Salman's request (also as the first tip on the welcome page):
+
+> This study is about **the presenter**, not the video's production quality. Please pay attention to how the presenter speaks and comes across.
+
+It deliberately doesn't name tone or emotion, so participants aren't told what differs between the two videos.
 
 ## Notes for implementation
 

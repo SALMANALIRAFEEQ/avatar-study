@@ -8,7 +8,8 @@ Makes, in study/media/:
 Needs ffmpeg: either on PATH, or `pip install imageio-ffmpeg` (bundles a portable copy).
 The voice uses Windows' built-in speech engine (System.Speech), so the sound check part is Windows only.
 
-Usage:  python tools/make_placeholder_media.py [--seconds 10]
+Usage:  python tools/make_placeholder_media.py [--seconds 10] [--force]
+Existing files are never overwritten unless --force is given (they may be the real stimuli).
 Replace these files with the real videos later; keep the same names or update study.config.json.
 """
 
@@ -103,6 +104,7 @@ def make_soundcheck(ffmpeg, word, out_name):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--seconds", type=int, default=10, help="length of each placeholder video")
+    parser.add_argument("--force", action="store_true", help="replace files that already exist")
     args = parser.parse_args()
 
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
@@ -111,12 +113,18 @@ def main():
 
     print("Videos:")
     for key, files in config["videos"].items():
+        if (MEDIA / Path(files["file"]).name).exists() and not args.force:
+            print(f"  {Path(files['file']).name} exists, skipped (use --force to replace)")
+            continue
         product, condition = key.split("_", 1)
         make_video(ffmpeg, key, files, config["products"][product]["name"], condition, args.seconds)
 
     print("Sound check:")
     sc = config["sound_check"]
-    make_soundcheck(ffmpeg, sc["correct"], Path(sc["file"]).name)
+    if (MEDIA / Path(sc["file"]).name).exists() and not args.force:
+        print(f"  {Path(sc['file']).name} exists, skipped (use --force to replace)")
+    else:
+        make_soundcheck(ffmpeg, sc["correct"], Path(sc["file"]).name)
 
 
 if __name__ == "__main__":

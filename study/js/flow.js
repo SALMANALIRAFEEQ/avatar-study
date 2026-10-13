@@ -8,7 +8,12 @@ import { toast, el } from './util.js';
 
 // consent → sound check → about you → (video → rating screens) × N → comparison → saving → debrief
 export function buildScreenList(config, state) {
-  const list = [{ type: 'consent' }, { type: 'soundcheck' }, { type: 'block', block: 'DEMO' }];
+  // Blocks with "pages" in the config get one screen per page.
+  const blockScreens = (id) => {
+    const b = config.blocks[id];
+    return b.pages ? b.pages.map((_, page) => ({ type: 'block', block: id, page })) : [{ type: 'block', block: id }];
+  };
+  const list = [{ type: 'consent' }, { type: 'soundcheck' }, ...blockScreens('DEMO')];
   state.videos.forEach((vd, index) => {
     list.push({ type: 'video', index });
     const subs = visibleSubblocks(config, vd.position);
@@ -16,7 +21,7 @@ export function buildScreenList(config, state) {
       type: 'rating', index, sub: sb.id, part: j + 1, parts: subs.length, last: j === subs.length - 1,
     }));
   });
-  list.push({ type: 'block', block: 'CMP' }, { type: 'saving' }, { type: 'debrief' });
+  list.push(...blockScreens('CMP'), { type: 'saving' }, { type: 'debrief' });
   return list;
 }
 
@@ -24,7 +29,6 @@ export function startFlow({ config, state, debug, assignmentPromise }) {
   const root = document.getElementById('app');
   const progressBar = document.querySelector('.progress');
   const progressFill = document.getElementById('progress-fill');
-  const stepLabel = document.getElementById('step-label');
   let current = null; // { destroy? } returned by the active screen
 
   const ctx = {
@@ -48,7 +52,6 @@ export function startFlow({ config, state, debug, assignmentPromise }) {
     const screen = ctx.list[index];
     root.replaceChildren();
     root.dataset.screen = screen.type;
-    stepLabel.textContent = labelFor(screen, config, state);
     // Restart the fade-in animation for each new screen.
     root.classList.remove('screen-enter');
     void root.offsetWidth;
@@ -86,22 +89,6 @@ export function startFlow({ config, state, debug, assignmentPromise }) {
   document.addEventListener('visibilitychange', () => { if (document.hidden) reportLeave(); });
 
   show(state.screen || 0);
-}
-
-// Short "where am I" label for the header.
-function labelFor(screen, config, state) {
-  const n = state.videos.length;
-  switch (screen.type) {
-    case 'consent': return 'Welcome';
-    case 'soundcheck': return 'Sound check';
-    case 'block': {
-      const b = config.blocks[screen.block];
-      return b.nav_label || b.title;
-    }
-    case 'video': return `Video ${screen.index + 1} of ${n}`;
-    case 'rating': return `Video ${screen.index + 1} · Questions`;
-    default: return 'Finish';
-  }
 }
 
 let debugCollapsed = false;
