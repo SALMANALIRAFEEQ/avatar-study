@@ -39,7 +39,7 @@ That is the participant link. It redirects to `study/`. For a test run add `?deb
 
 Edit, commit, push to `main`. Pages redeploys automatically in about a minute. Participants who are already partway through keep their progress.
 
-If you change questions or items after real data collection has started, also change `app_version` in the config so the rows can be told apart. And keep `APP_VERSION_PREFIX` in `Code.gs` matching (see the Apps Script README).
+If you change questions or items after real data collection has started, also change `app_version` in the config so the rows can be told apart. Versions are major.minor.patch: raise the **patch** number (1a.2.0 to 1a.2.1) only when the screens stay the same, such as an added write-in box, so people partway through can continue. Raise the **minor** number (1a.2 to 1a.3) when screens or their order change; runs in progress then start again from the beginning. And keep `APP_VERSION_PREFIX` in `Code.gs` matching (see the Apps Script README).
 
 ## Running locally
 

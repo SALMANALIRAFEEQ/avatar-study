@@ -29,6 +29,7 @@ Also save a **partial** payload to sheet `partials` if a participant drops out a
 | sound_check_passed | bool | |
 | DEMO_age, DEMO_gender, DEMO_country, DEMO_english, DEMO_education, DEMO_occupation, DEMO_online_shop, DEMO_social_media, DEMO_ai_tools, DEMO_ai_seen | string | stored as the option label |
 | DEMO_occupation_other | string | write-in text when DEMO_occupation = "Other", otherwise empty |
+| DEMO_country_other | string | write-in text when DEMO_country = "Other", otherwise empty (from app_version 1a.2.1) |
 | ATT_1 | int | raw answer |
 | att_passed | bool | ATT_1 == 5 |
 | CMP_trust, CMP_buy | string | "video1" / "video2" / "none" |

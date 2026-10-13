@@ -33,9 +33,13 @@ export function saveProgress(state) {
   writeJson(PROGRESS_KEY, { ...state, saved_at: Date.now() });
 }
 
+// Versions are major.minor.patch. A patch release (1a.2.0 -> 1a.2.1) keeps the same screens,
+// so a run in progress continues; any other version change starts a fresh run.
+const sameRelease = (a, b) => String(a).split('.').slice(0, 2).join('.') === String(b).split('.').slice(0, 2).join('.');
+
 export function loadProgress(appVersion) {
   const s = readJson(PROGRESS_KEY);
-  if (!s || s.app_version !== appVersion || Date.now() - s.saved_at > PROGRESS_MAX_AGE_MS) return null;
+  if (!s || !sameRelease(s.app_version, appVersion) || Date.now() - s.saved_at > PROGRESS_MAX_AGE_MS) return null;
   return s;
 }
 

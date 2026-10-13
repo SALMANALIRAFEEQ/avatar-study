@@ -1,5 +1,5 @@
 {
-  "app_version": "1a.2.0",
+  "app_version": "1a.2.1",
   "study_title": "AI Avatar Study",
   "endpoint_url": "https://script.google.com/macros/s/AKfycbw-58x3HuRzPFGiM2iD-OLITmtfM-eFGmG2e8X_xTBUV1itOyKKQNGUox-EV-5Hcijfwg/exec",
   "contact_email": "salmanalirafeeq123@gmail.com",
@@ -122,7 +122,8 @@
       "items": [
         { "id": "DEMO_age", "type": "single", "text": "Your age", "options": ["18 to 24", "25 to 34", "35 to 44", "45+"] },
         { "id": "DEMO_gender", "type": "single", "text": "Gender", "options": ["Woman", "Man", "Prefer to self describe", "Prefer not to say"] },
-        { "id": "DEMO_country", "type": "single", "text": "Country you live in", "options": ["Pakistan", "Other"] },
+        { "id": "DEMO_country", "type": "single", "text": "Country you live in", "options": ["Pakistan", "Other"],
+          "other": { "index": 1, "id": "DEMO_country_other", "label": "Please tell us which country", "max": 60 } },
         { "id": "DEMO_english", "type": "single", "text": "How comfortable are you understanding spoken English?", "options": ["Very comfortable", "Comfortable", "Somewhat comfortable", "Not comfortable"] },
         { "id": "DEMO_education", "type": "single", "text": "Highest level of education you have completed", "options": ["Secondary school (Matric / O Levels) or less", "Intermediate (FA / FSc / A Levels)", "Bachelor's degree", "Master's degree or higher", "Prefer not to say"] },
         { "id": "DEMO_occupation", "type": "single", "text": "What do you currently do?", "options": ["Student", "Employed (public / government sector)", "Employed (private sector)", "Self-employed / business owner", "Not currently working", "Other"],

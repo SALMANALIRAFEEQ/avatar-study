@@ -16,7 +16,8 @@ Changed 2026-10-13 at Salman's request (app_version 1a.1.0): added DEMO_english,
 |---|---|---|
 | DEMO_age | Your age | 18 to 24 / 25 to 34 / 35 to 44 / 45+ |
 | DEMO_gender | Gender | Woman / Man / Prefer to self describe / Prefer not to say |
-| DEMO_country | Country you live in | Pakistan / Other (no free text) |
+| DEMO_country | Country you live in | Pakistan / Other |
+| DEMO_country_other | Please tell us which country | Free text, max 60 chars. Shown and required only when DEMO_country = Other; empty otherwise. Added 2026-10-13 at Salman's request (app_version 1a.2.1); rows from 1a.2.0 have no value here |
 | DEMO_english | How comfortable are you understanding spoken English? | Very comfortable / Comfortable / Somewhat comfortable / Not comfortable |
 
 **Page 2: Education and work**

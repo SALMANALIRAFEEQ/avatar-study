@@ -18,7 +18,7 @@
  * Do NOT use "New deployment": that creates a new URL and the site stops saving.
  */
 
-var SCRIPT_VERSION = 3;           // reported by doGet, so you can check a redeploy took effect
+var SCRIPT_VERSION = 4;           // reported by doGet, so you can check a redeploy took effect
 var APP_VERSION_PREFIX = '1a.';   // must match the start of app_version in study.config.json
 var MAX_BYTES = 50000;            // bigger payloads are rejected
 var LOCK_WAIT_MS = 20000;
@@ -49,7 +49,7 @@ var PARTICIPANT_COLUMNS = [
   'participant_id', 'app_version', 'is_test', 'started_at', 'consented_at', 'submitted_at',
   'total_duration_s', 'sequence_id', 'assignment_method', 'device_class',
   'sound_check_attempts', 'sound_check_passed',
-  'DEMO_age', 'DEMO_gender', 'DEMO_country', 'DEMO_english',
+  'DEMO_age', 'DEMO_gender', 'DEMO_country', 'DEMO_country_other', 'DEMO_english',
   'DEMO_education', 'DEMO_occupation', 'DEMO_occupation_other',
   'DEMO_online_shop', 'DEMO_social_media', 'DEMO_ai_tools', 'DEMO_ai_seen',
   'ATT_1', 'att_passed',
@@ -190,6 +190,8 @@ function validParticipant(p) {
   if (!isIntIn(p.sound_check_attempts, 0, 20) || typeof p.sound_check_passed !== 'boolean') return false;
   for (var i = 0; i < DEMO_ITEMS.length; i++) if (!isShortString(p[DEMO_ITEMS[i]], 80)) return false;
   if (!isText(p.DEMO_occupation_other, 100)) return false;
+  // Added in script version 4. Optional, so runs started on the previous site version still save.
+  if (p.DEMO_country_other !== undefined && !isText(p.DEMO_country_other, 60)) return false;
   if (!(p.ATT_1 === null || isIntIn(p.ATT_1, 1, 7)) || typeof p.att_passed !== 'boolean') return false;
   if (['video1', 'video2', 'none'].indexOf(p.CMP_trust) < 0 || ['video1', 'video2', 'none'].indexOf(p.CMP_buy) < 0) return false;
   if (!isText(p.CMP_why, 500) || !isText(p.CMP_noticed, 500)) return false;
