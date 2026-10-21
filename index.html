@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Does a warmer AI presenter sell better? A pilot study</title>
+<meta name="description" content="A within-subject pilot experiment testing whether the emotional style of an AI avatar presenter changes trust, engagement and purchase intention. 31 participants, pre-specified analysis, honest null result.">
+<meta name="author" content="Salman Ali Rafeeq">
+<meta property="og:title" content="Does a warmer AI presenter sell better? A pilot study">
+<meta property="og:description" content="A within-subject pilot experiment on AI avatar emotional expression. The procedure worked; the manipulation did not land. Here is everything, including what went wrong.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/report.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="kicker">Pilot study &middot; October 2026</p>
+    <h1>Does a warmer AI presenter sell better?</h1>
+    <p class="standfirst">
+      Thirty-one people watched the same product advert twice &mdash; once with a neutral AI
+      presenter, once with a warm one &mdash; and rated the presenter each time. The procedure
+      worked end to end. The emotional manipulation did not.
+    </p>
+    <p class="byline">
+      <span>Salman Ali Rafeeq</span> &middot;
+      <span>independent pilot study</span> &middot;
+      <span>October 2026</span>
+    </p>
+    <p class="closed-note">
+      <span aria-hidden="true">&#9679;</span>
+      <span><b>This study is closed.</b> Data was collected between 13 and 19 October 2026.
+      The questionnaire is no longer online; this page reports what came out of it.</span>
+    </p>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <ol>
+    <li><a href="#question">The question</a></li>
+    <li><a href="#videos">The two videos</a></li>
+    <li><a href="#method">How it was run</a></li>
+    <li><a href="#measures">What was measured</a></li>
+    <li><a href="#analysis">How it was analysed</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#order">The order effect</a></li>
+    <li><a href="#meaning">What it means</a></li>
+    <li><a href="#limits">Limitations</a></li>
+    <li><a href="#next">Next steps</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ------------------------------------------------------------ question -->
+<section id="question">
+  <div class="wrap">
+    <div class="section-head"><p class="kicker">The question</p>
+      <h2>Does emotional expression make a synthetic presenter more persuasive?</h2></div>
+
+    <p class="lede">
+      AI-generated presenters are already selling things. The open question is how
+      <em>expressive</em> they should be. A flat delivery may read as cold and mechanical; too much
+      warmth may read as fake. The wider project asks where the useful middle sits, across
+      four levels of expressiveness: neutral, warm, enthusiastic and exaggerated.
+    </p>
+    <p>
+      This pilot tests only the first step of that ladder &mdash; <strong>neutral versus
+      warm</strong> &mdash; with three goals: show that the whole procedure works, check that
+      the emotional manipulation is actually noticed, and get first effect-size estimates to
+      plan a properly powered study.
+    </p>
+
+    <div class="callout">
+      <h3>Stated in advance</h3>
+      <p>Before any data arrived, the prediction was: warm would be rated higher on perceived
+      warmth (the manipulation check), and higher on likeability, engagement and purchase
+      intention. Trust and naturalness were left as open questions.</p>
+    </div>
+
+    <ul class="keynums">
+      <li class="keynum"><b>37</b><span>opened the study and consented</span></li>
+      <li class="keynum"><b>31</b><span>finished it</span></li>
+      <li class="keynum"><b>17</b><span>in the main analysis</span></li>
+      <li class="keynum"><b>62</b><span>presenter ratings collected</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- -------------------------------------------------------------- videos -->
+<section id="videos">
+  <div class="wrap wrap--wide">
+    <div class="section-head"><p class="kicker">The stimulus</p>
+      <h2>The two videos</h2></div>
+  </div>
+  <div class="wrap wrap--wide">
+    <p>Both advertise the same fictional product, a &ldquo;Kora&rdquo; insulated water bottle,
+      with the same claims in the same order. The intended difference is only in the presenter's
+      manner: facial expression, intonation and gesture. Judge for yourself whether they differ
+      &mdash; that turns out to be the central issue.</p>
+
+    <div class="videos">
+      <figure class="video-card">
+        <video controls playsinline preload="none" poster="media/A_neutral.jpg"
+               aria-label="Neutral presenter version of the Kora advert">
+          <source src="media/A_neutral.mp4" type="video/mp4">
+          Your browser cannot play this video.
+        </video>
+        <figcaption>
+          <span class="video-tag video-tag--neutral">Neutral</span>
+          <p>Calm, flat intonation, minimal gesture, neutral expression. 25.7 seconds.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="video-card">
+        <video controls playsinline preload="none" poster="media/A_warm.jpg"
+               aria-label="Warm presenter version of the Kora advert">
+          <source src="media/A_warm.mp4" type="video/mp4">
+          Your browser cannot play this video.
+        </video>
+        <figcaption>
+          <span class="video-tag video-tag--warm">Warm</span>
+          <p>Friendly smile, warmer and slightly more varied intonation, open gestures.
+            Deliberately not over the top. 27.4 seconds.</p>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="wrap">
+    <h3>What could not be matched</h3>
+    <p>Both clips were generated rather than acted, so the two takes differ in ways that have
+      nothing to do with emotion. These are reported rather than hidden, because they matter for
+      reading the results:</p>
+    <ul class="plain">
+      <li>the background tone differs: cool grey in the neutral take, warmer beige in the warm one;</li>
+      <li>the presenter's face is not quite identical between the two generations;</li>
+      <li>the opening line differs slightly (&ldquo;Meet Kora,&rdquo; against &ldquo;Kora. Meet Kora.&rdquo;),
+        as does how the price is spoken;</li>
+      <li>the burned-in captions highlight different words;</li>
+      <li>one sentence present only in the neutral take was cut at a shot change so the two
+        scripts matched word for word.</li>
+    </ul>
+    <p>Audio loudness <em>was</em> matched (to &minus;16.5&nbsp;LUFS) so that neither clip was
+      simply louder. Only the overall level was changed; intonation was left untouched.</p>
+  </div>
+</section>
+
+<!-- -------------------------------------------------------------- method -->
+<section id="method">
+  <div class="wrap">
+    <div class="section-head"><p class="kicker">Procedure</p>
+      <h2>How it was run</h2></div>
+
+    <p>A <strong>within-subject design</strong>: every participant saw both videos, so each
+      person acts as their own baseline. With a sample this small that is far more sensitive than
+      splitting people into two groups. The cost is that participants can compare the two takes,
+      which invites them to guess what is being tested.</p>
+
+    <p>Order was <strong>counterbalanced</strong>. The server handed out the next sequence in
+      rotation, so the two orders stayed balanced as people arrived:</p>
+
+    <div class="table-scroll">
+      <table>
+        <caption>The two viewing orders, assigned in rotation</caption>
+        <thead><tr><th>Sequence</th><th>First video</th><th>Second video</th><th>Finishers</th></tr></thead>
+        <tbody>
+          <tr><td>S1</td><td>Neutral</td><td>Warm</td><td>13</td></tr>
+          <tr><td>S2</td><td>Warm</td><td>Neutral</td><td>18</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>What a participant went through</h3>
+    <ol class="flow">
+      <li><b>Consent</b><span>Plain-language purpose, roughly 8&ndash;10 minutes, voluntary,
+        anonymous, 18+. It stated up front that the presenters are digitally generated.</span></li>
+      <li><b>Sound check</b><span>A three-second clip; the participant picked the word they heard
+        from four options. Without working audio the whole study is meaningless.</span></li>
+      <li><b>Background questions</b><span>Age band, gender, country, comfort with spoken English,
+        education, occupation, online shopping, social media use, AI tool use, and whether they
+        had seen AI presenters before.</span></li>
+      <li><b>First video, then rating block</b><span>The video could not be skipped or
+        fast-forwarded, and the Continue button only appeared once it had played to the end.</span></li>
+      <li><b>Second video, then the same rating block</b><span>The next video was preloaded while
+        they answered, so the slower connections did not stall.</span></li>
+      <li><b>Direct comparison</b><span>Which presenter did you trust more? Which made you more
+        likely to buy? Plus two optional free-text questions.</span></li>
+      <li><b>Debrief and completion code</b><span>Shown only after the server confirmed the data
+        was saved.</span></li>
+    </ol>
+
+    <h3>Measures taken to keep the data clean</h3>
+    <ul class="plain">
+      <li><strong>Forced full viewing.</strong> Seeking forward was blocked, and actual watched
+        seconds, pauses and replays were recorded for every view.</li>
+      <li><strong>Randomised item order.</strong> Items were shuffled within each block per
+        participant, and the order shown was stored, so question order cannot masquerade as an effect.</li>
+      <li><strong>An attention check</strong> hidden among the second block's items.</li>
+      <li><strong>Drop-out tracking.</strong> If someone left mid-way, a marker recorded the screen
+        they stopped on, so the funnel could be counted rather than guessed.</li>
+      <li><strong>No personal data.</strong> No names, emails, IP addresses or location. Each
+        participant is a random identifier generated in their own browser; the only device
+        information kept is &ldquo;mobile&rdquo; or &ldquo;desktop&rdquo;.</li>
+    </ul>
+
+    <h3>Who took part</h3>
+    <p>A convenience sample, recruited through personal networks and social media &mdash;
+      not a representative sample of anyone. Of the 17 in the main analysis: 11 were aged
+      18&ndash;24, 4 were 25&ndash;34 and 2 were 35&ndash;44; 12 were men and 5 women; 12 were in
+      Pakistan and 5 elsewhere. <strong>All 17 took it on a phone</strong>, which is why the study
+      was built mobile-first.</p>
+
+    <p>Of the 37 who consented, 6 left without finishing: 4 at the sound check, 1 during a video
+      and 1 in a rating block.</p>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------ measures -->
+<section id="measures">
+  <div class="wrap">
+    <div class="section-head"><p class="kicker">Instruments</p>
+      <h2>What was measured</h2></div>
+
+    <p>After <em>each</em> video the participant answered the same 23 rating items. Scales were
+      adapted from published instruments rather than invented, so results can be compared with
+      existing work.</p>
+
+    <div class="table-scroll">
+      <table>
+        <caption>The five scales, plus the two manipulation-check items</caption>
+        <thead>
+          <tr><th>Measure</th><th>Items</th><th>Scale</th><th>Adapted from</th></tr>
+        </thead>
+        <tbody>
+          <tr class="check-row"><td>Perceived warmth &amp; expressiveness<br><small>manipulation check</small></td>
+            <td>2</td><td>1&ndash;7</td><td>&mdash;</td></tr>
+          <tr><td>Trustworthiness</td><td>5</td><td>1&ndash;7</td>
+            <td>Ohanian (1990), source credibility</td></tr>
+          <tr><td>Naturalness / anthropomorphism</td><td>5</td><td>1&ndash;5</td>
+            <td>Godspeed (Bartneck et&nbsp;al., 2009)</td></tr>
+          <tr><td>Likeability</td><td>5</td><td>1&ndash;5</td>
+            <td>Godspeed (Bartneck et&nbsp;al., 2009)</td></tr>
+          <tr><td>Engagement</td><td>3</td><td>1&ndash;7</td><td>written for this pilot</td></tr>
+          <tr><td>Purchase intention</td><td>3</td><td>1&ndash;7</td>
+            <td>Dodds, Monroe &amp; Grewal (1991)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Instruction shown above every video, worded so it never hints at what differs:
+      <em>&ldquo;This study is about the presenter, not the video's production quality. Please pay
+      attention to how the presenter speaks and comes across.&rdquo;</em></p>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------ analysis -->
+<section id="analysis">
+  <div class="wrap">
+    <div class="section-head"><p class="kicker">Analysis</p>
+      <h2>How it was analysed</h2></div>
+
+    <div class="callout">
+      <h3>Two rules fixed before the data existed</h3>
+      <p><strong>The analysis was pre-specified.</strong> The tests, the exclusion rules and the
+        definition of a successful manipulation check were all written down before collection
+        began. Nothing below was chosen after seeing which result looked better.</p>
+      <p><strong>No AI anywhere in the analysis.</strong> Every number on this page comes from one
+        deterministic Python script with a fixed random seed. No language model summarised,
+        interpreted or produced any statistic. Re-running the script on the same data reproduces
+        every figure exactly.</p>
+    </div>
+
+    <h3>Exclusions</h3>
+    <p>Six rules were set in advance. In the event, only one of them removed anybody &mdash; but
+      it removed a lot of people:</p>
+
+    <div class="table-scroll">
+      <table>
+        <caption>From 31 finishers to 17 analysed</caption>
+        <thead><tr><th>Pre-specified rule</th><th>Excluded</th></tr></thead>
+        <tbody>
+          <tr><td>Test/debug submissions</td><td>0</td></tr>
+          <tr><td><strong>Failed the attention check</strong></td><td><strong>14</strong></td></tr>
+          <tr><td>Did not watch both videos to the end</td><td>0</td></tr>
+          <tr><td>Never passed the sound check</td><td>0</td></tr>
+          <tr><td>Finished in under three minutes</td><td>0 <small>(both were already excluded above)</small></td></tr>
+          <tr><td>Gave an identical answer to every item</td><td>0</td></tr>
+          <tr><td><strong>Remaining for analysis</strong></td><td><strong>17</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>Fourteen of thirty-one people failed the attention check.</strong> That is 45%,
+      which is far too high to blame on the participants. The item asked them to select
+      &ldquo;Somewhat agree&rdquo;, sitting on a seven-point scale next to &ldquo;Agree&rdquo;,
+      on a phone, among items they were answering quickly. It is more likely that the check
+      itself was badly designed than that half the sample was careless. Because this cost so much
+      of the sample, every headline result below is also reported for all 31 finishers.</p>
+
+    <h3>The tests</h3>
+    <ul class="plain">
+      <li>Paired <em>t</em>-test for each outcome, warm against neutral, two-sided.</li>
+      <li>Wilcoxon signed-rank as a robustness check, because these are rating scales with a small <em>n</em>.</li>
+      <li>Effect size as Cohen's <em>d<sub>z</sub></em> with a bootstrap 95% confidence interval
+        (5,000 resamples, seed 42), plus the raw mean difference with its interval.</li>
+      <li>A mixed model per outcome to separate the effect of <em>condition</em> from the effect of
+        <em>position</em> (first or second viewing).</li>
+      <li>Exact binomial tests on the two forced choices.</li>
+    </ul>
+    <p>Effect sizes lead; <em>p</em> values are reported but do not decide anything. There is no
+      correction for multiple comparisons, so with seven outcomes, everything except the
+      manipulation check is exploratory.</p>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------- results -->
+<section id="results">
+  <div class="wrap">
+    <div class="section-head"><p class="kicker">Results</p>
+      <h2>The manipulation did not land</h2></div>
+
+    <p class="lede">
+      The manipulation check was the one test that had to work. It did not. Participants rated the
+      warm presenter's warmth at <strong>5.41</strong> and the neutral presenter's at
+      <strong>5.41</strong> &mdash; a difference of <strong>0.00</strong> scale points
+      (95% CI &minus;0.51 to +0.51, <em>d<sub>z</sub></em> = 0.00, <em>p</em> = 1.00).
+      Of the 17 participants, 6 rated the warm version warmer, 4 rated the neutral version warmer,
+      and 7 gave both exactly the same score.
+    </p>
+
+    <p>Perceived expressiveness behaved the same way: 4.94 against 4.88, a difference of 0.06
+      points (<em>d<sub>z</sub></em> = 0.04, <em>p</em> = .88).</p>
+
+    <p>The pre-specified rule was that the check counts as successful only if perceived warmth is
+      higher for the warm version with a confidence interval excluding zero. It is not, so the
+      rule applies as written: <strong>the remaining differences cannot be read as effects of
+      warmth</strong>, because warmth is not what the two videos delivered.</p>
+
+    <figure class="fig">
+      <img src="figures/fig3_forest.png" width="1245" height="630"
+           alt="Forest plot of the mean difference between warm and neutral for all seven outcomes. Perceived warmth sits exactly on zero. All intervals except engagement cross zero.">
+      <figcaption>Every outcome, as the difference between the warm and the neutral version. A
+        point to the right of the dashed line favours warm. Only engagement &mdash; the orange
+        exception, pointing the wrong way &mdash; has an interval clear of zero.</figcaption>
+    </figure>
+
+    <div class="table-scroll">
+      <table>
+        <caption>Main results, 17 participants, each rating both presenters</caption>
+        <thead>
+          <tr>
+            <th>Outcome</th><th>Scale</th><th>Neutral<br>M (SD)</th><th>Warm<br>M (SD)</th>
+            <th>Difference</th><th>95% CI</th><th><em>d<sub>z</sub></em></th>
+            <th>Paired <em>t</em></th><th>Wilcoxon</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="check-row"><td>Perceived warmth <small>check</small></td><td>1&ndash;7</td>
+            <td>5.41 (1.18)</td><td>5.41 (1.33)</td><td class="flat">0.00</td>
+            <td>&minus;0.51, +0.51</td><td>0.00</td><td><em>p</em> = 1.00</td><td><em>p</em> = .96</td></tr>
+          <tr class="check-row"><td>Perceived expressiveness <small>check</small></td><td>1&ndash;7</td>
+            <td>4.88 (1.36)</td><td>4.94 (1.48)</td><td class="flat">+0.06</td>
+            <td>&minus;0.78, +0.90</td><td>+0.04</td><td><em>p</em> = .88</td><td><em>p</em> = .83</td></tr>
+          <tr><td>Trustworthiness</td><td>1&ndash;7</td><td>5.20 (1.17)</td><td>5.27 (1.21)</td>
+            <td class="flat">+0.07</td><td>&minus;0.21, +0.35</td><td>+0.13</td>
+            <td><em>p</em> = .60</td><td><em>p</em> = .55</td></tr>
+          <tr><td>Naturalness</td><td>1&ndash;5</td><td>3.49 (0.88)</td><td>3.47 (1.07)</td>
+            <td class="flat">&minus;0.02</td><td>&minus;0.38, +0.33</td><td>&minus;0.03</td>
+            <td><em>p</em> = .89</td><td><em>p</em> = 1.00</td></tr>
+          <tr><td>Likeability</td><td>1&ndash;5</td><td>4.16 (0.68)</td><td>4.00 (0.86)</td>
+            <td class="flat">&minus;0.16</td><td>&minus;0.39, +0.06</td><td>&minus;0.38</td>
+            <td><em>p</em> = .14</td><td><em>p</em> = .17</td></tr>
+          <tr><td>Engagement</td><td>1&ndash;7</td><td>5.24 (1.22)</td><td>4.92 (1.53)</td>
+            <td class="pos">&minus;0.31</td><td>&minus;0.58, &minus;0.05</td><td>&minus;0.60</td>
+            <td><em>p</em> = .02</td><td><em>p</em> = .03</td></tr>
+          <tr><td>Purchase intention</td><td>1&ndash;7</td><td>5.12 (1.17)</td><td>4.76 (1.44)</td>
+            <td class="flat">&minus;0.35</td><td>&minus;0.86, +0.15</td><td>&minus;0.36</td>
+            <td><em>p</em> = .16</td><td><em>p</em> = .11</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Engagement is the only interval that clears zero, and it points the <em>opposite</em> way to
+      the prediction: people reported being slightly less engaged by the warm version. It should
+      not be believed. It is one of seven uncorrected comparisons; the manipulation check failed,
+      so it cannot be an effect of warmth; and across all 31 finishers it shrinks to &minus;0.23
+      with an interval that includes zero (<em>p</em> = .10). It is most likely noise, or a
+      response to the production differences between the two takes rather than to the presenter.</p>
+
+    <figure class="fig">
+      <img src="figures/fig1_paired.png" width="1863" height="948"
+           alt="Seven small panels, one per outcome, each showing every participant's neutral and warm rating joined by a grey line, with condition means and confidence intervals.">
+      <figcaption>The same data, one grey line per participant. The lines go up about as often as
+        they go down in every panel &mdash; the visual signature of no effect, rather than of a
+        small one.</figcaption>
+    </figure>
+
+    <h3>Asked to choose directly, people split</h3>
+    <p>After both videos, participants were asked outright which presenter they trusted more and
+      which made them more likely to buy. Neither question produced a majority for the warm
+      version; the most common answer about trust was that there was no difference at all.</p>
+
+    <div class="legend">
+      <span><i class="w"></i>Warm presenter</span>
+      <span><i class="n"></i>Neutral presenter</span>
+      <span><i class="f"></i>No difference / not sure</span>
+    </div>
+
+    <figure class="fig">
+      <img src="figures/fig2_forced_choice.png" width="1125" height="450"
+           alt="Bar chart of forced-choice answers. Trusted more: warm 4, neutral 6, no difference 7. More likely to buy: warm 5, neutral 8, no difference 4.">
+      <figcaption>Forced choices among the 17 analysed participants. Trust: 4 warm, 6 neutral,
+        7 no difference (binomial <em>p</em> = .75). Buying: 5 warm, 8 neutral, 4 no difference
+        (<em>p</em> = .58).</figcaption>
+    </figure>
+
+    <h3>The measures themselves worked</h3>
+    <p>One genuinely good result: the rating scales were highly internally consistent, in both
+      conditions. Whatever went wrong, it was not the questionnaire.</p>
+
+    <div class="table-scroll">
+      <table>
+        <caption>Cronbach's alpha by scale and condition (.70 is the usual threshold)</caption>
+        <thead><tr><th>Scale</th><th>Items</th><th>Neutral</th><th>Warm</th></tr></thead>
+        <tbody>
+          <tr><td>Trustworthiness</td><td>5</td><td>.94</td><td>.96</td></tr>
+          <tr><td>Naturalness</td><td>5</td><td>.87</td><td>.92</td></tr>
+          <tr><td>Likeability</td><td>5</td><td>.93</td><td>.95</td></tr>
+          <tr><td>Engagement</td><td>3</td><td>.84</td><td>.91</td></tr>
+          <tr><td>Purchase intention</td><td>3</td><td>.93</td><td>.94</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>With 17 people these values are unstable and should not be over-read, but every scale sits
+      comfortably above the threshold, and the three-item engagement scale written for this pilot
+      held up alongside the published ones.</p>
+  </div>
+</section>
+
+<!-- --------------------------------------------------------------- order -->
+<section id="order">
+  <div class="wrap">
+    <div class="section-head"><p class="kicker">The one clear signal</p>
+      <h2>Whichever video came second was rated higher</h2></div>
+
+    <p class="lede">
+      The condition made no difference. <strong>Position did.</strong> Separating the two in a
+      mixed model shows a consistent, positive effect of being the second video watched &mdash;
+      across nearly every outcome, regardless of which presenter it was.
+    </p>
+
+    <div class="table-scroll">
+      <table>
+        <caption>Mixed model per outcome: score ~ condition + position + (1 | participant)</caption>
+        <thead>
+          <tr><th>Outcome</th><th>Condition<br>(warm vs neutral)</th><th></th>
+              <th>Position<br>(second vs first)</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Perceived warmth</td><td class="flat">&minus;0.03</td><td><em>p</em> = .86</td>
+              <td class="pos">+0.59</td><td><em>p</em> = .003</td></tr>
+          <tr><td>Perceived expressiveness</td><td class="flat">+0.01</td><td><em>p</em> = .98</td>
+              <td class="pos">+0.88</td><td><em>p</em> = .01</td></tr>
+          <tr><td>Trustworthiness</td><td class="flat">+0.06</td><td><em>p</em> = .65</td>
+              <td class="pos">+0.26</td><td><em>p</em> = .03</td></tr>
+          <tr><td>Naturalness</td><td class="flat">&minus;0.05</td><td><em>p</em> = .71</td>
+              <td class="pos">+0.43</td><td><em>p</em> = .001</td></tr>
+          <tr><td>Likeability</td><td class="flat">&minus;0.18</td><td><em>p</em> = .02</td>
+              <td class="pos">+0.29</td><td><em>p</em> &lt; .001</td></tr>
+          <tr><td>Engagement</td><td class="flat">&minus;0.33</td><td><em>p</em> = .006</td>
+              <td class="flat">+0.22</td><td><em>p</em> = .07</td></tr>
+          <tr><td>Purchase intention</td><td class="flat">&minus;0.37</td><td><em>p</em> = .11</td>
+              <td class="flat">+0.34</td><td><em>p</em> = .15</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Because the order was counterbalanced, this does not contaminate the comparison between
+      conditions &mdash; it is exactly what counterbalancing is for. But it is a real finding in
+      its own right, and a warning for the full study: <strong>showing someone the same advert
+      twice produces a sizeable second-viewing bump</strong> that is larger than any difference
+      the emotional manipulation produced.</p>
+
+    <h3>What participants said they noticed</h3>
+    <p>The open-text answers point the same way. Asked what made the difference between the two
+      presenters, most people described <em>production</em> details, not manner:</p>
+
+    <blockquote class="quote">&ldquo;Background and Bottle handling is different in both videos,
+      everything else is same.&rdquo;<footer>neutral first, warm second</footer></blockquote>
+    <blockquote class="quote">&ldquo;The products color difference in both videos.&rdquo;
+      <footer>warm first, neutral second</footer></blockquote>
+    <blockquote class="quote">&ldquo;I didn't see a big difference at all and it felt real AI fake,
+      but video 2 was a bit better.&rdquo;<footer>warm first, neutral second</footer></blockquote>
+
+    <p>Where people did describe the presenter, they tended to describe whichever came
+      <em>second</em> as the more human one &mdash; and that happened under both orders, which is
+      the position effect showing up in words as well as numbers:</p>
+
+    <blockquote class="quote">&ldquo;In the first video the presenter seems un-human with a bit
+      disconnection between the presenter and her actions. In the second video the presenter seems
+      more human-like and body language seems natural.&rdquo;
+      <footer>neutral first, warm second</footer></blockquote>
+    <blockquote class="quote">&ldquo;Yes the second one looked more like a real human
+      presenter.&rdquo;<footer>warm first, neutral second</footer></blockquote>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------- meaning -->
+<section id="meaning">
+  <div class="wrap">
+    <div class="section-head"><p class="kicker">Interpretation</p>
+      <h2>What this does and does not show</h2></div>
+
+    <p><strong>It does not show that emotional expression is irrelevant to persuasion.</strong>
+      That hypothesis was never tested here, because the two videos were not perceived as
+      differing in warmth. A manipulation that does not register cannot produce a downstream
+      effect, and its absence says nothing about the underlying question.</p>
+
+    <p>What the pilot does establish is more modest, and genuinely useful for planning the full
+      study:</p>
+
+    <ul class="plain">
+      <li><strong>The apparatus works.</strong> Consent, sound check, forced full viewing,
+        randomised items, counterbalanced assignment, retry-on-failure saving, drop-out tracking
+        and a clean analysis pipeline all functioned on real phones on real connections. 31 of 37
+        people who consented finished, and no submitted run was lost.</li>
+      <li><strong>The measures work.</strong> Every scale was internally consistent
+        (&alpha; .84&ndash;.96), including the engagement items written for this pilot.</li>
+      <li><strong>Generating a reliable emotional contrast is the hard part.</strong> Two prompts
+        asking for &ldquo;neutral&rdquo; and &ldquo;warm&rdquo; delivery from the same video tool
+        produced clips that viewers could not tell apart on warmth &mdash; while differing
+        visibly in background, framing and caption detail. The manipulation, not the measurement,
+        is where the next effort belongs.</li>
+      <li><strong>Repeated exposure matters.</strong> The second viewing was rated more warmly,
+        more expressively and more naturally than the first, whichever clip it was.</li>
+      <li><strong>The attention check was too hard.</strong> Losing 45% of a sample to one item is
+        a design fault worth fixing before scaling up.</li>
+    </ul>
+
+    <div class="callout">
+      <h3>The same conclusion holds without the exclusions</h3>
+      <p>Because the attention check removed so many people, the whole analysis was repeated on
+        all 31 finishers. The pattern is unchanged: perceived warmth differs by +0.13 points
+        (<em>d<sub>z</sub></em> = 0.12, <em>p</em> = .51), and no outcome has an interval clear of
+        zero. This robustness check was added after seeing the exclusion rate, and is reported as
+        an addition to the pre-specified plan rather than part of it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- -------------------------------------------------------------- limits -->
+<section id="limits">
+  <div class="wrap">
+    <div class="section-head"><p class="kicker">Honesty</p>
+      <h2>Limitations</h2></div>
+    <ul class="plain">
+      <li><strong>Tiny, non-representative sample.</strong> 17 analysed, recruited from personal
+        networks, mostly 18&ndash;24, mostly in Pakistan, all on phones. Nothing here generalises
+        to a population.</li>
+      <li><strong>Not powered.</strong> This pilot was never capable of detecting a small effect.
+        A null result at this size is weak evidence of absence even when the manipulation works
+        &mdash; and here it did not.</li>
+      <li><strong>The same advert twice.</strong> The second product planned for the study was
+        never produced, so the design changed to showing one product twice. Participants could
+        therefore compare takes directly and guess the purpose, and the second viewing was a
+        familiar one.</li>
+      <li><strong>The two videos differ beyond emotion</strong> &mdash; background, face, opening
+        line, spoken price, captions. Any difference found could have come from those instead.</li>
+      <li><strong>Seven outcomes, no correction.</strong> With uncorrected tests, roughly one
+        spurious &ldquo;significant&rdquo; result is expected by chance. Exactly one appeared.</li>
+      <li><strong>AI disclosure.</strong> Participants were told the presenters were AI-generated,
+        which is ethically required and increasingly realistic, but may itself shape trust ratings.</li>
+      <li><strong>One avatar, one product, one language, one culture.</strong></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------------------- next -->
+<section id="next">
+  <div class="wrap">
+    <div class="section-head"><p class="kicker">Next</p>
+      <h2>What the full study should change</h2></div>
+
+    <ol class="flow">
+      <li><b>Fix the manipulation first, and pre-test it</b><span>Before collecting anything,
+        run a small rating-only study on candidate clips and keep only pairs that are reliably
+        separated on perceived warmth. Nothing else matters until that holds.</span></li>
+      <li><b>Make the clips differ in exactly one thing</b><span>Same background, same framing,
+        same face, same captions, same spoken price &mdash; ideally one generation pipeline with
+        only the delivery parameter changed, or a human actor recorded multiple ways.</span></li>
+      <li><b>Go between-subjects, or use different products</b><span>Showing the same advert
+        twice produced a second-viewing bump bigger than the manipulation. Different products per
+        condition, or a between-subjects design with a larger sample, avoids it.</span></li>
+      <li><b>Rewrite the attention check</b><span>Use an instruction that is unambiguous on a
+        phone, and place it so that a fast but honest participant still passes.</span></li>
+      <li><b>Plan the sample size from these estimates</b><span>The pilot's reliable estimates are
+        the scale reliabilities and the order effect, not the condition effects. For a
+        within-subject comparison, detecting an effect the size of the engagement difference
+        (<em>d<sub>z</sub></em> = 0.60) with 80% power needs about 24 participants; a more
+        realistic small effect of <em>d<sub>z</sub></em> = 0.30 needs about 90.</span></li>
+    </ol>
+
+    <p>The full study's four-level design &mdash; neutral, warm, enthusiastic, exaggerated &mdash;
+      is also better suited to the real question, which is where expressiveness stops helping and
+      starts hurting. A two-level test cannot find a turning point, only a slope.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="page-foot">
+  <div class="wrap">
+    <p>Participant-level responses are not published. The study collected no names, email
+      addresses, IP addresses or locations; participants were identified only by a random
+      identifier generated in their own browser, and the responses are held privately.</p>
+    <p>Questions about the study, or a request for more detail on the method or the numbers:
+      <a href="mailto:salmanalirafeeq123@gmail.com">salmanalirafeeq123@gmail.com</a></p>
+    <p>Independent pilot study by Salman Ali Rafeeq, October 2026. Self-directed research,
+      not affiliated with or funded by any institution. The products shown are fictional.</p>
+  </div>
+</footer>
+
+</body>
+</html>
